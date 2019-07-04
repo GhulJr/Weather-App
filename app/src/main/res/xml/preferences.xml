@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Some weird problem with using auto_refresh_key, probably used or defined somewhere-->
+
+
+        <EditTextPreference
+            android:key="@string/location_key"
+            android:title="@string/location"
+            android:defaultValue="@string/pref_default_location" />
+
+        <ListPreference
+            android:key="@string/unit_key"
+            android:title="@string/unit"
+            android:defaultValue="@string/format_temperature_celsius"
+            android:entries="@array/unit_labels"
+            android:entryValues="@array/unit_values"/>
+
+        <ListPreference
+            android:key="@string/refresh_key"
+            android:title="@string/auto_refresh"
+            android:defaultValue="@string/three_hours_value"
+            android:entries="@array/auto_refresh_labels"
+            android:entryValues="@array/auto_refresh_values"/>
+
+        <CheckBoxPreference
+            android:key="@string/notifications_key"
+            android:title="@string/notifications"
+            android:defaultValue="true"
+            android:summary="@string/notifications_description"/>
+</PreferenceScreen>

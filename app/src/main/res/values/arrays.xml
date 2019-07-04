@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- - - - - - - - - -->
+    <!--SharedPreferences-->
+    <!-- - - - - - - - - -->
+
+    <!--Auto refresh-->
+
+    <!--Labels-->
+    <string-array name="auto_refresh_labels">
+        <item>@string/never_label</item>
+        <item>@string/one_hour_label</item>
+        <item>@string/three_hours_label</item>
+        <item>@string/six_hours_label</item>
+        <item>@string/twelve_hours_label</item>
+        <item>@string/twenty_four_hours_label</item>
+    </string-array>
+
+    <!--Values-->
+    <string-array name="auto_refresh_values">
+        <item>@string/never_value</item>
+        <item>@string/one_hour_value</item>
+        <item>@string/three_hours_value</item>
+        <item>@string/six_hours_values</item>
+        <item>@string/twelve_hours_value</item>
+        <item>@string/twenty_four_hours_value</item>
+    </string-array>
+
+    <!--Unit-->
+    <!--Labels-->
+    <string-array name="unit_labels">
+        <item>@string/celsius_label</item>
+        <item>@string/fahrenheit_label</item>
+    </string-array>
+
+    <!--Values-->
+    <string-array name="unit_values">
+        <item>@string/format_temperature_celsius</item>
+        <item>@string/format_temperature_fahrenheit</item>
+    </string-array>
+
+</resources>
