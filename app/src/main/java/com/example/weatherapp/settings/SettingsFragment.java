@@ -15,11 +15,10 @@ import com.example.weatherapp.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat
 implements SharedPreferences.OnSharedPreferenceChangeListener,
-        Preference.OnPreferenceChangeListener
-{
+        Preference.OnPreferenceChangeListener {
 
-    @Override
     /** Triggered when SettingsFragment is created. */
+    @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         // Inflate preferences from xml file.
         addPreferencesFromResource(R.xml.preferences);
@@ -58,8 +57,8 @@ implements SharedPreferences.OnSharedPreferenceChangeListener,
 
     }
 
-    @Override
     /** Update preference summary whenever it's changed. */
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference p = findPreference(key);
         if(p != null) {
@@ -70,8 +69,8 @@ implements SharedPreferences.OnSharedPreferenceChangeListener,
         }
     }
 
-    @Override
     //TODO: It's temporary solution for finding location, in final version maps will be attached
+    @Override
     public boolean onPreferenceChange(Preference preference, Object o) {
         Toast error = Toast.makeText(getContext(), "Choose correct location!", Toast.LENGTH_SHORT);
 

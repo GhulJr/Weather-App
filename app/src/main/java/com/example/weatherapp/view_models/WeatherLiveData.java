@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class WeatherLiveData extends LiveData<String[]> {
+
     Context context;
 
     public WeatherLiveData(Context context) {
@@ -22,6 +23,7 @@ public class WeatherLiveData extends LiveData<String[]> {
         loadData();
     }
 
+    /** Fetch JSON with weather information using AsyncTask*/
     private void loadData() {
         new  AsyncTask<String, Void, String[]>() {
             public final String TAG = WeatherForecastViewModel.class.getSimpleName();
@@ -41,6 +43,7 @@ public class WeatherLiveData extends LiveData<String[]> {
                 } catch (IOException e) {
                     Log.e(TAG, "Unable to make HTTP request.");
                 }
+
                 // Get objects as strings from JSONObject string.
                 String dataString[] = new String[0];
                 try {

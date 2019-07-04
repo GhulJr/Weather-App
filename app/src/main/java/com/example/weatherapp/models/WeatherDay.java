@@ -1,4 +1,4 @@
-package com.example.weatherapp.data;
+package com.example.weatherapp.models;
 
 public class WeatherDay {
     private int locationID;
