@@ -15,20 +15,20 @@
  */
 package com.example.weatherapp;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.weatherapp.models.WeatherDay;
+import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.recycler_views.WeatherAdapter;
 import com.example.weatherapp.settings.SettingsActivity;
 import com.example.weatherapp.view_models.WeatherForecastViewModel;
@@ -60,10 +60,10 @@ public class MainActivity extends AppCompatActivity implements
 
         // TODO: It's temporary, later on i will use LiveData+ViewModel.
         // List of all weather items.
-        List<WeatherDay> weatherDayList = new ArrayList<>();
+        List<WeatherData> weatherDayList = new ArrayList<>();
         // Temporary placeholder data
         for(int i = 0; i < 14; ++i) {
-            weatherDayList.add(new WeatherDay(i,i-7, i+5));
+            weatherDayList.add(new WeatherData(i,i-7, i+5));
         }
 
         // Get recycler view layout.
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements
 //- poprawić list item
 //- pokombinować z wieloma forcastami i wgl
 //- generalnie ogarnąć jak przetwarzać dane z tego api xD
-//- dodać preferencje i ogarnąć, w jaki sposób wybierać miasta
+//- dodać preferencje i ogarnąć, w jaki sposób wybierać miasta //////////////////ZROBIONE
 //- automatyczne updaty
 //- manualne updaty też
 //- powiadomienia (w końcu serwisy, jeeeej :D)

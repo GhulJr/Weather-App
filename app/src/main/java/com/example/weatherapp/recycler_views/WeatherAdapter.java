@@ -1,8 +1,8 @@
 package com.example.weatherapp.recycler_views;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +10,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.weatherapp.R;
-import com.example.weatherapp.models.WeatherDay;
+import com.example.weatherapp.models.WeatherData;
 
 import java.util.List;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
-    private         List<WeatherDay> weatherDayList;
+    private         List<WeatherData> weatherDayList;
     final private   ListItemClickListener onClickListener;
 
     /** Constructor */
-    public WeatherAdapter(List<WeatherDay> weatherDayList, ListItemClickListener onClickListener) {
+    public WeatherAdapter(List<WeatherData> weatherDayList, ListItemClickListener onClickListener) {
         this.weatherDayList = weatherDayList;
         this.onClickListener = onClickListener;
     }

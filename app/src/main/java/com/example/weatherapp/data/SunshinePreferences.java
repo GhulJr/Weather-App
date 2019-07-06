@@ -17,7 +17,7 @@ package com.example.weatherapp.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.example.weatherapp.R;
 

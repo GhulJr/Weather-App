@@ -1,6 +1,6 @@
 package com.example.weatherapp.view_models;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
