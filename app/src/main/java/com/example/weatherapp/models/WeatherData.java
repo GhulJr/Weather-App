@@ -19,8 +19,8 @@ public class WeatherDay {
         return maxTemp;
     }
 
-    public void setMaxTemp(int maxTemp) {
-        this.maxTemp = maxTemp;
+    public int getLocationID() {
+        return locationID;
     }
 
     public int getMinTemp() {
@@ -32,8 +32,8 @@ public class WeatherDay {
         this.minTemp = minTemp;
     }
 
-    public int getLocationID() {
-        return locationID;
+    public void setMaxTemp(int maxTemp) {
+        this.maxTemp = maxTemp;
     }
 
     public void setLocationID(int locationID) {
