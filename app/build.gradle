@@ -10,6 +10,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Saves database versions as schemas in JSON objects.
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -19,26 +27,26 @@ android {
 }
 
 dependencies {
-    // Version of support library
+    // Version of support library.
     def support_version = '28.0.0'
-    // Implementation for basic app elements
+    // Implementation for basic app elements.
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.0'
-    //Implementations for constraint layout and recycler view
+    //Implementations for constraint layout and recycler view.
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    // Implementations for preferences
+    // Implementations for preferences.
     implementation 'androidx.preference:preference:1.0.0'
-    // Instrumentation dependencies use androidTestImplementation
-    // (as opposed to testImplementation for local unit tests run in the JVM)
+    // Instrumentation dependencies use androidTestImplementation.
+    // (as opposed to testImplementation for local unit tests run in the JVM).
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.annotation:annotation:1.0.0'
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test:rules:1.1.0'
-    // Implementations for view model
+    // Implementations for view model.
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
-    // Implementations for Room
+    // Implementations for Room.
     def room_version = "2.1.0"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"

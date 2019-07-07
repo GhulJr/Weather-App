@@ -36,8 +36,8 @@
 
     <!--Values-->
     <string-array name="unit_values">
-        <item>@string/format_temperature_celsius</item>
-        <item>@string/format_temperature_fahrenheit</item>
+        <item>@string/celsius_value</item>
+        <item>@string/fahrenheit_value</item>
     </string-array>
 
 </resources>

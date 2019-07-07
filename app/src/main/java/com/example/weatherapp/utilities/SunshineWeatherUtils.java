@@ -42,6 +42,16 @@ public final class SunshineWeatherUtils {
         return temperatureInFahrenheit;
     }
 
+    private static double fahrenheitToCelsius(double temperatureInFahrenheit) {
+        double temperatureInCelsius = (temperatureInFahrenheit - 32) / 1.8;
+        return temperatureInCelsius;
+    }
+
+    private static double kelvinToCelsius(double temperatureInKelvin) {
+        double temperatureInCelsius = temperatureInKelvin - 273.15;
+        return temperatureInCelsius;
+    }
+
     /**
      * Temperature data is stored in Celsius by our app. Depending on the user's preference,
      * the app may need to display the temperature in Fahrenheit. This method will perform that
@@ -57,9 +67,11 @@ public final class SunshineWeatherUtils {
     public static String formatTemperature(Context context, double temperature) {
         int temperatureFormatResourceId = R.string.format_temperature_celsius;
 
+
         if (!SunshinePreferences.isMetric(context)) {
             temperature = celsiusToFahrenheit(temperature);
             temperatureFormatResourceId = R.string.format_temperature_fahrenheit;
+
         }
 
         /* For presentation, assume the user doesn't care about tenths of a degree. */

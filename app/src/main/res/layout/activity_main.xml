@@ -21,7 +21,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include
-        layout="@layout/current_weather"
+        layout="@layout/current_daily_weather"
         android:id="@+id/curr_weather">
     </include>
 

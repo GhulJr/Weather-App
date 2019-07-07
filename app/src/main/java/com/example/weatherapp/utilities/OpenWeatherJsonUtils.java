@@ -17,24 +17,29 @@ package com.example.weatherapp.utilities;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
+
+import com.example.weatherapp.models.WeatherData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
+import java.util.List;
 
 /**
  * Utility functions to handle OpenWeatherMap JSON data.
  */
 public final class OpenWeatherJsonUtils {
 
+    public static final String TAG = OpenWeatherJsonUtils.class.getSimpleName();
     /**
      * This method parses JSON from a web response and returns an array of Strings
      * describing the weather over various days from the forecast.
      * <p/>
      * Later on, we'll be parsing the JSON into structured data within the
-     * getFullWeatherDataFromJson function, leveraging the data we have stored in the JSON. For
+     * getCurrentWeatherDataFromJson function, leveraging the data we have stored in the JSON. For
      * now, we just convert the JSON into human-readable strings.
      *
      * @param forecastJsonStr JSON response from server
@@ -140,11 +145,80 @@ public final class OpenWeatherJsonUtils {
      * Parse the JSON and convert it into ContentValues that can be inserted into our database.
      *
      * @param context         An application context, such as a service or activity context.
-     * @param forecastJsonStr The JSON to parse into ContentValues.
+     * @param forecastJsonStr The JSON to parse into WeatherData.
      *
-     * @return An array of ContentValues parsed from the JSON.
+     * @return Single WeatherData parsed from the JSON.
      */
-    public static ContentValues[] getFullWeatherDataFromJson(Context context, String forecastJsonStr) {
+    public static WeatherData getCurrentWeatherDataFromJson(Context context, String forecastJsonStr)
+            throws JSONException {
+
+        final String WD_WEATHER = "weather";
+        final String WD_CONDITION_ID = "id";
+        final String WD_MAIN = "main";
+        final String WD_TEMP_CURR = "temp";
+        final String WD_TEMP_MIN = "temp_min";
+        final String WD_TEMP_MAX = "temp_max";
+        final String WD_TIME = "dt";
+        final String WD_LOCATION_NAME = "name";
+        final String WD_HTTP_CODE = "cod";
+
+        JSONObject currentWeatherJson = new JSONObject(forecastJsonStr);
+
+        WeatherData weatherData = null;
+
+        if(currentWeatherJson.has(WD_HTTP_CODE)) {
+            int httpResponseCode = currentWeatherJson.getInt(WD_HTTP_CODE);
+            switch (httpResponseCode) {
+                case HttpURLConnection.HTTP_OK:
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.e(TAG, "Invalid URL!");
+                    return null;
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.e(TAG, "Invalid api key!");
+                    return null;
+            }
+        }
+
+        // Values used for creating WeatherData object.
+        int weatherCondition;
+        int currTemp;
+        int minTemp;
+        int maxTemp;
+        long date;
+        int forecastType;
+        String locationName;
+
+        // JSON object, that contains info about weather condition.
+        JSONArray weatherConditionArrayJson = currentWeatherJson.getJSONArray(WD_WEATHER);
+        JSONObject weatherConditionJson = weatherConditionArrayJson.getJSONObject(0);
+        // JSON object, that contains info about temperature.
+        JSONObject mainInfoJson = currentWeatherJson.getJSONObject(WD_MAIN);
+
+        /* Getting values. */
+
+        // Weather condition.
+        weatherCondition = weatherConditionJson.getInt(WD_CONDITION_ID);
+        // Current temperature.
+        currTemp = mainInfoJson.getInt(WD_TEMP_CURR);
+        // Minimum temperature.
+        minTemp = mainInfoJson.getInt(WD_TEMP_MIN);
+        // Maximum temperature.
+        maxTemp = mainInfoJson.getInt(WD_TEMP_MAX);
+        // Date.
+        date = SunshineDateUtils.getLocalDateFromUTC(1000L*currentWeatherJson.getInt(WD_TIME));
+        // Forecast type.
+        forecastType = WeatherData.FORECAST_TYPE_CURRENT;
+        // Location.
+        locationName = currentWeatherJson.getString(WD_LOCATION_NAME);
+
+        // Instantiating new object with received values.
+        weatherData = new WeatherData(weatherCondition, currTemp, minTemp, maxTemp,
+                date, forecastType, locationName);
+        return weatherData;
+    }
+    public static WeatherData[] getForecastWeatherDataFromJson(Context context, String forecastJsonStr)
+            throws JSONException {
         /** This will be implemented in a future lesson **/
         return null;
     }

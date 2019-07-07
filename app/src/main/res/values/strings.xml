@@ -142,6 +142,8 @@
     <string name="fahrenheit_label">°F</string>
 
     <!--Values are created above-->
+    <string name="celsius_value">Celsius</string>
+    <string name="fahrenheit_value">Fahrenheit</string>
 
     <!--Auto refresh-->
     <string name="auto_refresh">Auto refresh</string>

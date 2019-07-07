@@ -7,11 +7,11 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/weather_city"
+        android:id="@+id/weather_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        tools:text="City"/>
+        tools:text="Location"/>
 
     <TextView
         android:id="@+id/weather_date"

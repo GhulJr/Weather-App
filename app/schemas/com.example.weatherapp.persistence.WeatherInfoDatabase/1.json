@@ -1,0 +1,76 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "59188f3e88c00ffc912519e13da9be11",
+    "entities": [
+      {
+        "tableName": "weather_information",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`weatherID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weather_condition` INTEGER NOT NULL, `current_temperature` REAL NOT NULL, `minimum_temperature` REAL NOT NULL, `maximum_temperature` REAL NOT NULL, `date` INTEGER NOT NULL, `forecast_type` INTEGER NOT NULL, `location_name` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "weatherID",
+            "columnName": "weatherID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weatherConditionID",
+            "columnName": "weather_condition",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currTemp",
+            "columnName": "current_temperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minTemp",
+            "columnName": "minimum_temperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxTemp",
+            "columnName": "maximum_temperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateInSec",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forecastType",
+            "columnName": "forecast_type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationName",
+            "columnName": "location_name",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "weatherID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '59188f3e88c00ffc912519e13da9be11')"
+    ]
+  }
+}

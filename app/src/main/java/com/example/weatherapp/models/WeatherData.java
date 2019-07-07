@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "Weather Information")
+@Entity(tableName = "weather_information")
 public class WeatherData {
 
     /** Constants for forecast type*/
@@ -17,18 +17,20 @@ public class WeatherData {
     //TODO: provide types of specific columns (if necessary)
     @PrimaryKey(autoGenerate = true)
     private int weatherID;
-    @ColumnInfo(name = "Weather Condition")
+    @ColumnInfo(name = "weather_condition")
     private int weatherConditionID;
-    @ColumnInfo(name = "Current Temperature")
-    private int currTemp;
-    @ColumnInfo(name = "Minimum Temperature")
-    private int minTemp;
-    @ColumnInfo(name = "Maximum Temperature")
-    private int maxTemp;
-    @ColumnInfo(name = "Date")
-    private int dateInSec;
-    @ColumnInfo(name = "Forecast Type")
+    @ColumnInfo(name = "current_temperature")
+    private double currTemp;
+    @ColumnInfo(name = "minimum_temperature")
+    private double minTemp;
+    @ColumnInfo(name = "maximum_temperature")
+    private double maxTemp;
+    @ColumnInfo(name = "date")
+    private long dateInMillis;
+    @ColumnInfo(name = "forecast_type")
     private int forecastType;
+    @ColumnInfo(name = "location_name")
+    private String locationName;
 
 
     /** Denotes annotated forecast type to integer type */
@@ -39,14 +41,15 @@ public class WeatherData {
     public WeatherData(int i, int i1, int i2) { //TODO: Temporary constructor
     }
 
-    public WeatherData(int weatherConditionID, int currTemp, int minTemp, int maxTemp,
-                       int dateInSec,@Forecast_Type int forecastType) {
+    public WeatherData(int weatherConditionID, double currTemp, double minTemp, double maxTemp,
+                       long dateInMillis, @Forecast_Type int forecastType, String locationName) {
         this.weatherConditionID = weatherConditionID;
         this.currTemp = currTemp;
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
-        this.dateInSec = dateInSec;
+        this.dateInMillis = dateInMillis;
         this.forecastType = forecastType;
+        this.locationName = locationName;
     }
 
     /** Getters and setters*/
@@ -66,36 +69,36 @@ public class WeatherData {
         this.weatherConditionID = weatherConditionID;
     }
 
-    public int getCurrTemp() {
+    public double getCurrTemp() {
         return currTemp;
     }
 
-    public void setCurrTemp(int currTemp) {
+    public void setCurrTemp(double currTemp) {
         this.currTemp = currTemp;
     }
 
-    public int getMinTemp() {
+    public double getMinTemp() {
         return minTemp;
     }
 
-    public void setMinTemp(int minTemp) {
+    public void setMinTemp(double minTemp) {
         this.minTemp = minTemp;
     }
 
-    public int getMaxTemp() {
+    public double getMaxTemp() {
         return maxTemp;
     }
 
-    public void setMaxTemp(int maxTemp) {
+    public void setMaxTemp(double maxTemp) {
         this.maxTemp = maxTemp;
     }
 
-    public int getDateInSec() {
-        return dateInSec;
+    public long getDateInMillis() {
+        return dateInMillis;
     }
 
-    public void setDateInSec(int dateInSec) {
-        this.dateInSec = dateInSec;
+    public void setDateInMillis(long dateInMillis) {
+        this.dateInMillis = dateInMillis;
     }
 
     @Forecast_Type
@@ -105,5 +108,13 @@ public class WeatherData {
 
     public void setForecastType(@Forecast_Type int forecastType) {
         this.forecastType = forecastType;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 }

@@ -44,9 +44,7 @@ implements SharedPreferences.OnSharedPreferenceChangeListener,
                 String value = sharedPreferences.getString(p.getKey(), "");
                 setPreferenceSummary(p, value);
             }
-
         }
-
     }
 
     @Override

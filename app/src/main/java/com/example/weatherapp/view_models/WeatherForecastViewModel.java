@@ -1,20 +1,41 @@
 package com.example.weatherapp.view_models;
 
 import android.app.Application;
+import android.content.Context;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+
+import com.example.weatherapp.persistence.WeatherInfoRepository;
 
 public class WeatherForecastViewModel extends AndroidViewModel {
 
-    public final WeatherLiveData data;
+    private final Context context;
+    private WeatherInfoRepository weatherInfoRepository;
+    private LiveData data;
 
     public WeatherForecastViewModel(@NonNull Application application) {
         super(application);
-        data = new WeatherLiveData(getApplication());
+        context = application.getApplicationContext();
+        init(context);
+    }
+
+    private void init(Context context) {
+        weatherInfoRepository = WeatherInfoRepository.getInstance(context);
+        //TODO: temporary init
+        loadData();
     }
 
     public LiveData getData() {
         return data;
     }
+
+    public void loadData() {
+        weatherInfoRepository.fetchData();
+        data = weatherInfoRepository.getWeatherDataTask();
+    }
+
+
 }

@@ -16,12 +16,12 @@ import java.util.List;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
-    private         List<WeatherData> weatherDayList;
+    private         List<WeatherData> weatherData;
     final private   ListItemClickListener onClickListener;
 
     /** Constructor */
-    public WeatherAdapter(List<WeatherData> weatherDayList, ListItemClickListener onClickListener) {
-        this.weatherDayList = weatherDayList;
+    public WeatherAdapter(List<WeatherData> weatherData, ListItemClickListener onClickListener) {
+        this.weatherData = weatherData;
         this.onClickListener = onClickListener;
     }
 
@@ -29,7 +29,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     @Override @NonNull
     public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.daily_forecast_list_item;
+        int layoutIdForListItem = R.layout.forecast_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
@@ -47,14 +47,19 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         TextView minTemp = weatherViewHolder.listItemWeather.findViewById(R.id.min_temp);
 
         // Set data to corresponding views.
-        maxTemp.setText(String.valueOf(weatherDayList.get(i).getMaxTemp()));
-        minTemp.setText(String.valueOf(weatherDayList.get(i).getMinTemp()));
+        maxTemp.setText(String.valueOf(weatherData.get(i).getMaxTemp()));
+        minTemp.setText(String.valueOf(weatherData.get(i).getMinTemp()));
+    }
+
+    public void setWeatherData(List<WeatherData> weatherData) {
+        this.weatherData = weatherData;
+        notifyDataSetChanged();
     }
 
     /** Get number of items. */
     @Override
     public int getItemCount()  {
-        return weatherDayList.size();
+        return weatherData.size();
     }
 
     /** Class responsible for keeping the view of single item. */

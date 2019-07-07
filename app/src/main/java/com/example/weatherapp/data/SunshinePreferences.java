@@ -110,11 +110,13 @@ public class SunshinePreferences {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
         String unitKey = context.getString(R.string.unit_key);
-        String defUnit = context.getString(R.string.format_temperature_celsius);
+        String defUnit = context.getString(R.string.celsius_value);
         String unit = sharedPreferences.getString(unitKey, defUnit);
 
-        //return unit;
-        return true;
+        if(unit.equals(defUnit)){
+            return true;
+        }
+        return false;
     }
 
     /**

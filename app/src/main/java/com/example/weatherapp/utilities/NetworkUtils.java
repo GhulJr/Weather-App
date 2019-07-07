@@ -38,7 +38,7 @@ public final class NetworkUtils {
     private static final String STATIC_WEATHER_URL =
             "https://andfun-weather.udacity.com/staticweather";
 
-    private static final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast";
+    private static final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
 
     private static final String API_KEY = "e5613d30ae570fde815617ff3b9fcac8";
 
