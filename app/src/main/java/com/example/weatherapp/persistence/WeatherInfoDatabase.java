@@ -15,7 +15,7 @@ public abstract class WeatherInfoDatabase extends RoomDatabase {
 
     public static WeatherInfoDatabase instance;
 
-    public static WeatherInfoDatabase getInstance(final Context context) {
+    public static WeatherInfoDatabase getInstance(final Context context)  {
         if(instance == null) {
             instance = Room.databaseBuilder(
                     context.getApplicationContext(),

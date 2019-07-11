@@ -15,9 +15,10 @@
  */
 package com.example.weatherapp;
 
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -46,6 +48,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     private RecyclerView recyclerView;
     private WeatherAdapter mAdapter;
     private WeatherForecastViewModel viewModel;
@@ -62,42 +66,11 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Remove the left caret
         getSupportActionBar().setDisplayShowHomeEnabled(false); // Remove the icon
 
-        // Set up all values related to shared preferences
+        // Set up all values related to shared preferences.
         setUpSharedPreferences();
 
-        /*// Get daily weather layout.
-        dailyWeatherLayout =(LinearLayout)getLayoutInflater()
-                .inflate(R.layout.activity_weather_details, null);
-        */
-
-        // TODO: It's temporary, later on i will use LiveData+ViewModel.
-        // List of all weather items.
-        List<WeatherData> weatherDayList = new ArrayList<>();
-        // Temporary placeholder data
-        for(int i = 0; i < 14; ++i) {
-            weatherDayList.add(new WeatherData(i,i-7, i+5));
-        }
-
-        // Get recycler view layout.
-        recyclerView = findViewById(R.id.main_recycler_view);
-        recyclerView.setHasFixedSize(true);
-
-        // Provide layout manager for recycler view.
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-        // TODO: Temporary create adapter here to check if recycler view works correctly.
-        // Create adapter for recycler view with listener, that starts weather details activity.
-        mAdapter = new WeatherAdapter(weatherDayList, new WeatherAdapter.ListItemClickListener() {
-            @Override
-            public void onListItemClick(int clickedItemIndex) {
-                Intent intent = new Intent(MainActivity.this, WeatherDetailsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        // Set adapter to recycler view.
-        recyclerView.setAdapter(mAdapter);
+        // Set up recycler view for hourly forecast information.
+        setUpHourlyRecyclerView();
 
         // Create ViewModel.
         viewModel = ViewModelProviders
@@ -106,68 +79,10 @@ public class MainActivity extends AppCompatActivity implements
 
         // Set observer to LiveData.
         viewModel.getData().observe(this, new Observer<List<WeatherData>>() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onChanged(@Nullable List<WeatherData> weatherData) {
-                /* Get necessary views. */
-                TextView weatherLocationView = findViewById(R.id.weather_location);
-                TextView weatherDateView = findViewById(R.id.weather_date);
-                TextView currTempView = findViewById(R.id.weather_temp);
-                TextView minMaxTempView = findViewById(R.id.max_min_temp);
-                TextView descriptionView = findViewById(R.id.weather_description);
-
-                /*Get daily weather data object*/
-                WeatherData currWeatherData = null;
-                for(WeatherData wd : weatherData) {
-                    if(wd.getForecastType() == WeatherData.FORECAST_TYPE_CURRENT) {
-                        currWeatherData = wd;
-                        break;
-                    }
-                }
-
-                /* Get and format values. */
-
-                // Used values.
-                double high = currWeatherData.getMaxTemp();
-                double low = currWeatherData.getMinTemp();
-
-
-                // Location.
-                String location = currWeatherData.getLocationName();
-                // Date.
-                DateFormat dateFormat = android.text.format.
-                        DateFormat.getDateFormat(getApplicationContext());
-                String date = SunshineDateUtils.getFriendlyDateString(
-                        getApplicationContext(),
-                        currWeatherData.getDateInMillis(),
-                        true);
-                // Current temperature.
-                String currTemp = SunshineWeatherUtils
-                        .formatTemperature(
-                                getApplicationContext(),
-                                currWeatherData.getCurrTemp());
-                // Icon.
-                int weatherConditionRes = SunshineWeatherUtils
-                        .getIconResourceForWeatherCondition(
-                                currWeatherData.getWeatherConditionID());
-                // High Lows
-                String minMaxTemp = SunshineWeatherUtils
-                        .formatHighLows(getApplicationContext(), high, low);
-                // Description.
-                String description = SunshineWeatherUtils
-                        .getStringForWeatherCondition(
-                                getApplicationContext(),
-                                currWeatherData.getWeatherConditionID());
-
-                /* Setting views. */
-                weatherLocationView.setText(location);
-                weatherDateView.setText(date);
-                currTempView.setText(currTemp);
-                currTempView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        weatherConditionRes, 0, 0, 0);
-                minMaxTempView.setText(minMaxTemp);
-                descriptionView.setText(description);
-
+                inflateDailyWeatherLayout(weatherData);
+                inflateHourlyForecastLayout(weatherData);
             }
         });
     }
@@ -197,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent);
                 break;
             }
+            case R.id.reload: {
+                viewModel.loadData();
+            }
             default: {
                 return false;
             }
@@ -207,12 +125,18 @@ public class MainActivity extends AppCompatActivity implements
     /** Update UI when preferences are changed. */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-       /* if(key.equals(R.string.auto_refresh_key)) {
-            //sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.default_refresh));
-        }*/
-
-        //TODO: Provide update mechanics when shared preferences are changed (refresh and so on),
-        // refresh should be in onStart() method.
+        if(key.equals(getString(R.string.location_key))) {
+            // Load new data if location has been changed.
+            viewModel.loadData(); //TODO: idk if shared preferences should update data like that. Check udemy solution.
+        } else if(key.equals(getString(R.string.unit_key))) {
+            // Update daily weather unit.
+            TextView tv = findViewById(R.id.weather_temp);
+            String updatedTemp = SunshineWeatherUtils.formatTemperature(
+                    getApplicationContext(), Double.parseDouble((String) tv.getText()));
+            tv.setText(updatedTemp);
+            // Update hourly forecast unit.
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     /** Get all the values from shared preferences to set it up. */
@@ -221,14 +145,113 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         //TODO: set it when shared preferences will be ready
     }
+
+    private void setUpHourlyRecyclerView() {
+        // Get recycler view layout.
+        recyclerView = findViewById(R.id.main_recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        // Provide layout manager for recycler view.
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // TODO: Temporary create adapter here to check if recycler view works correctly.
+        // Create adapter for recycler view with listener, that starts weather details activity.
+        mAdapter = new WeatherAdapter(getApplicationContext(), new WeatherAdapter.ListItemClickListener() {
+            @Override
+            public void onListItemClick(int clickedItemIndex) {
+                Intent intent = new Intent(MainActivity.this, WeatherDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+        // Set adapter to recycler view.
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void inflateDailyWeatherLayout(List<WeatherData> weatherData) {
+        /* Get necessary views. */
+        TextView weatherLocationView = findViewById(R.id.weather_location);
+        TextView weatherDateView = findViewById(R.id.weather_date);
+        TextView currTempView = findViewById(R.id.weather_temp);
+        TextView minMaxTempView = findViewById(R.id.max_min_temp);
+        TextView descriptionView = findViewById(R.id.weather_description);
+
+        /*Get daily weather data object*/
+        WeatherData currWeatherData = null;
+        for(WeatherData wd : weatherData) {
+            if(wd.getForecastType() == WeatherData.FORECAST_TYPE_CURRENT) {
+                currWeatherData = wd;
+                break;
+            }
+        }
+
+        if(currWeatherData == null) {
+            Log.e(TAG, "Unable to fetch current weather data from database!");
+            return;
+        }
+
+        /* Get and format values. */
+
+        // Used values.
+        double high = currWeatherData.getMaxTemp();
+        double low = currWeatherData.getMinTemp();
+
+
+        // Location.
+        String location = currWeatherData.getLocationName();
+        // Date.
+        DateFormat dateFormat = android.text.format.
+                DateFormat.getDateFormat(getApplicationContext());
+        String date = SunshineDateUtils.getFriendlyDateString(
+                getApplicationContext(),
+                currWeatherData.getDateInMillis(),
+                true);
+        // Current temperature.
+        String currTemp = SunshineWeatherUtils
+                .formatTemperature(
+                        getApplicationContext(),
+                        currWeatherData.getCurrTemp());
+        // Icon.
+        int weatherConditionRes = SunshineWeatherUtils
+                .getIconResourceForWeatherCondition(
+                        currWeatherData.getWeatherConditionID());
+        // High Lows
+        String minMaxTemp = SunshineWeatherUtils
+                .formatHighLows(getApplicationContext(), high, low);
+        // Description.
+        String description = SunshineWeatherUtils
+                .getStringForWeatherCondition(
+                        getApplicationContext(),
+                        currWeatherData.getWeatherConditionID());
+
+        /* Setting views. */
+        weatherLocationView.setText(location);
+        weatherDateView.setText(date);
+        currTempView.setText(currTemp);
+        currTempView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                weatherConditionRes, 0, 0, 0);
+        minMaxTempView.setText(minMaxTemp);
+        descriptionView.setText(description);
+
+    }
+
+    private void inflateHourlyForecastLayout(List<WeatherData> weatherData) {
+
+        List<WeatherData> forecastWeatherData = new ArrayList<>();
+
+        for(WeatherData wd : weatherData) {
+            if(wd.getForecastType() == WeatherData.FORECAST_TYPE_HOURLY) {
+                forecastWeatherData.add(wd);
+            }
+        }
+
+        mAdapter.setWeatherData(forecastWeatherData);
+    }
 }
 
 //TODO: Na chwilę lista co mam zrobić:
-//- zapewnić dobre przechowywanie na dane ///////////////////////////////ZROBIONE
-//- poprawić list item
-//- pokombinować z wieloma forcastami i wgl
-//- generalnie ogarnąć jak przetwarzać dane z tego api ///////////////////////////////////ZROBIONE
-//- dodać preferencje i ogarnąć, w jaki sposób wybierać miasta //////////////////ZROBIONE
+//- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
 //- automatyczne updaty
 //- manualne updaty też
 //- powiadomienia (w końcu serwisy, jeeeej :D)
@@ -237,3 +260,15 @@ public class MainActivity extends AppCompatActivity implements
 //- zamienić listę na hashmapę (w LiveData)
 //- zmienić format datowy nieco
 //- no i na końcu porawanie juajki, dodawanie animacji, powiadomień o braku połączenia itp. itd.
+//- może użyć card layout?
+//- animowane ikony!
+//- dodać odpowiednie weather conditions
+//- przepisać async tasks na coś innego
+//- zacząć korzystać z trello :CCCCCCCCC
+
+
+//- zapewnić dobre przechowywanie na dane ///////////////////////////////ZROBIONE
+//- poprawić list item ///////////////////////zrobione
+//- pokombinować z wieloma forcastami i wgl ////////////////Zrobione
+//- generalnie ogarnąć jak przetwarzać dane z tego api ///////////////////////////////////ZROBIONE
+//- dodać preferencje i ogarnąć, w jaki sposób wybierać miasta //////////////////ZROBIONE

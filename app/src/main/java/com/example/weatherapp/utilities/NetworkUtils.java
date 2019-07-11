@@ -18,6 +18,8 @@ package com.example.weatherapp.utilities;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.weatherapp.models.WeatherData;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -38,7 +40,9 @@ public final class NetworkUtils {
     private static final String STATIC_WEATHER_URL =
             "https://andfun-weather.udacity.com/staticweather";
 
-    private static final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
+    private static final String DAILY_BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
+
+    private static final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast";
 
     private static final String API_KEY = "e5613d30ae570fde815617ff3b9fcac8";
 
@@ -54,7 +58,7 @@ public final class NetworkUtils {
     /* The units we want our API to return */
     private static final String units = "metric";
     /* The number of days we want our API to return */
-    private static final int numDays = 14;
+    private static final int numDays = 40;
 
     final static String QUERY_PARAM = "q";
     final static String LAT_PARAM = "lat";
@@ -71,8 +75,15 @@ public final class NetworkUtils {
      * @param locationQuery The location that will be queried for.
      * @return The URL to use to query the weather server.
      */
-    public static URL buildUrl(String locationQuery) {
-        Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+    public static URL buildUrl(String locationQuery, int forecastType) {
+        // Provide URL based on given forecast type.
+        final String URL;
+        if(forecastType == WeatherData.FORECAST_TYPE_CURRENT) {
+            URL = DAILY_BASE_URL;
+        } else {
+            URL = FORECAST_BASE_URL;
+        }
+        Uri builtUri = Uri.parse(URL).buildUpon()
                 .appendQueryParameter(QUERY_PARAM, locationQuery)
                 .appendQueryParameter(FORMAT_PARAM, format)
                 .appendQueryParameter(UNITS_PARAM, units)
@@ -99,7 +110,7 @@ public final class NetworkUtils {
      * @return The Url to use to query the weather server.
      */
     public static URL buildUrl(Double lat, Double lon) {
-        Uri.Builder builtUri = Uri.parse(FORECAST_BASE_URL)
+        Uri.Builder builtUri = Uri.parse(DAILY_BASE_URL)
                 .buildUpon()
                 .appendQueryParameter(LAT_PARAM, String.valueOf(lat))
                 .appendQueryParameter(LON_PARAM, String.valueOf(lon));

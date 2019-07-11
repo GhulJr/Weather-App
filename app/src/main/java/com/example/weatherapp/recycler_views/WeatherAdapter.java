@@ -3,24 +3,36 @@ package com.example.weatherapp.recycler_views;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.weatherapp.R;
 import com.example.weatherapp.models.WeatherData;
+import com.example.weatherapp.utilities.SunshineWeatherUtils;
 
 import java.util.List;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
+    private         Context context;
     private         List<WeatherData> weatherData;
     final private   ListItemClickListener onClickListener;
 
-    /** Constructor */
-    public WeatherAdapter(List<WeatherData> weatherData, ListItemClickListener onClickListener) {
+
+    /** Constructors */
+
+    public WeatherAdapter(Context context, ListItemClickListener onClickListener) {
+        this.context = context;
+        this.onClickListener = onClickListener;
+    }
+
+    public WeatherAdapter(Context context, List<WeatherData> weatherData, ListItemClickListener onClickListener) {
+        this.context = context;
         this.weatherData = weatherData;
         this.onClickListener = onClickListener;
     }
@@ -29,7 +41,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     @Override @NonNull
     public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.forecast_list_item;
+        int layoutIdForListItem = R.layout.hourly_forecast_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
@@ -41,14 +53,23 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     /** Bind data to It's view. */
     @Override
     public void onBindViewHolder(@NonNull WeatherViewHolder weatherViewHolder, int i) {
-        // TODO: finish it when list item will be finished
         // Get necessary views form weather list item.
-        TextView maxTemp = weatherViewHolder.listItemWeather.findViewById(R.id.max_temp);
-        TextView minTemp = weatherViewHolder.listItemWeather.findViewById(R.id.min_temp);
+        TextView timeView = weatherViewHolder.listItemWeather.findViewById(R.id.hourly_date);
+        ImageView imageView = weatherViewHolder.listItemWeather.findViewById(R.id.hourly_image);
+        TextView temperatureView = weatherViewHolder.listItemWeather.findViewById(R.id.hourly_temp);
 
-        // Set data to corresponding views.
-        maxTemp.setText(String.valueOf(weatherData.get(i).getMaxTemp()));
-        minTemp.setText(String.valueOf(weatherData.get(i).getMinTemp()));
+        // Used values.
+        String time = (String) android.text.format.DateFormat
+                .format("H:mm", weatherData.get(i).getDateInMillis());
+        int conditionId = weatherData.get(i).getWeatherConditionID();
+        int imageRes = SunshineWeatherUtils.getIconResourceForWeatherCondition(conditionId);
+        String temperature = SunshineWeatherUtils
+                .formatTemperature(context, weatherData.get(i).getCurrTemp());
+
+        // Inflate layout.
+        timeView.setText(time);
+        imageView.setImageResource(imageRes);
+        temperatureView.setText(temperature);
     }
 
     public void setWeatherData(List<WeatherData> weatherData) {
@@ -59,7 +80,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     /** Get number of items. */
     @Override
     public int getItemCount()  {
-        return weatherData.size();
+        if(weatherData != null)
+            return weatherData.size();
+        return -1;
     }
 
     /** Class responsible for keeping the view of single item. */
@@ -81,6 +104,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             onClickListener.onListItemClick(getAdapterPosition());
         }
     }
+
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);

@@ -180,15 +180,6 @@ public final class OpenWeatherJsonUtils {
             }
         }
 
-        // Values used for creating WeatherData object.
-        int weatherCondition;
-        int currTemp;
-        int minTemp;
-        int maxTemp;
-        long date;
-        int forecastType;
-        String locationName;
-
         // JSON object, that contains info about weather condition.
         JSONArray weatherConditionArrayJson = currentWeatherJson.getJSONArray(WD_WEATHER);
         JSONObject weatherConditionJson = weatherConditionArrayJson.getJSONObject(0);
@@ -198,28 +189,100 @@ public final class OpenWeatherJsonUtils {
         /* Getting values. */
 
         // Weather condition.
-        weatherCondition = weatherConditionJson.getInt(WD_CONDITION_ID);
+        int weatherCondition = weatherConditionJson.getInt(WD_CONDITION_ID);
         // Current temperature.
-        currTemp = mainInfoJson.getInt(WD_TEMP_CURR);
+        double currTemp = mainInfoJson.getDouble(WD_TEMP_CURR);
         // Minimum temperature.
-        minTemp = mainInfoJson.getInt(WD_TEMP_MIN);
+        double minTemp = mainInfoJson.getDouble(WD_TEMP_MIN);
         // Maximum temperature.
-        maxTemp = mainInfoJson.getInt(WD_TEMP_MAX);
+        double maxTemp = mainInfoJson.getDouble(WD_TEMP_MAX);
         // Date.
-        date = SunshineDateUtils.getLocalDateFromUTC(1000L*currentWeatherJson.getInt(WD_TIME));
+        long date = SunshineDateUtils.getLocalDateFromUTC(1000L*currentWeatherJson.getLong(WD_TIME));
         // Forecast type.
-        forecastType = WeatherData.FORECAST_TYPE_CURRENT;
+        int forecastType = WeatherData.FORECAST_TYPE_CURRENT;
         // Location.
-        locationName = currentWeatherJson.getString(WD_LOCATION_NAME);
+        String locationName = currentWeatherJson.getString(WD_LOCATION_NAME);
 
         // Instantiating new object with received values.
         weatherData = new WeatherData(weatherCondition, currTemp, minTemp, maxTemp,
                 date, forecastType, locationName);
         return weatherData;
     }
+
     public static WeatherData[] getForecastWeatherDataFromJson(Context context, String forecastJsonStr)
             throws JSONException {
-        /** This will be implemented in a future lesson **/
-        return null;
+        final String WD_WEATHER = "weather";
+        final String WD_CONDITION_ID = "id";
+        final String WD_MAIN = "main";
+        final String WD_TEMP_CURR = "temp";
+        final String WD_TEMP_MIN = "temp_min";
+        final String WD_TEMP_MAX = "temp_max";
+        final String WD_TIME = "dt";
+        final String WD_LIST = "list";
+        final String WD_CITY = "city";
+        final String WD_LOCATION_NAME = "name";
+        final String WD_HTTP_CODE = "cod";
+
+        JSONObject currentWeatherJson = new JSONObject(forecastJsonStr);
+
+        if(currentWeatherJson.has(WD_HTTP_CODE)) {
+            int httpResponseCode = currentWeatherJson.getInt(WD_HTTP_CODE);
+            switch (httpResponseCode) {
+                case HttpURLConnection.HTTP_OK:
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.e(TAG, "Invalid URL!");
+                    return null;
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.e(TAG, "Invalid api key!");
+                    return null;
+            }
+        }
+
+        // Values used for creating WeatherData object.
+        int weatherCondition;
+        double currTemp;
+        double minTemp;
+        double maxTemp;
+        long date;
+        int forecastType;
+        String locationName;
+
+        // JSON object, that contains info about weather condition.
+        JSONArray weatherArrayJson = currentWeatherJson.getJSONArray(WD_LIST);
+
+        JSONObject cityJson = currentWeatherJson.getJSONObject(WD_CITY);
+        WeatherData weatherData[] = new WeatherData[weatherArrayJson.length()];
+        Log.e(TAG, String.valueOf(weatherArrayJson.length()));
+
+        // Location name.
+        locationName = cityJson.getString(WD_LOCATION_NAME);
+        // Forecast type.
+        forecastType = WeatherData.FORECAST_TYPE_HOURLY;
+
+
+        for(int i = 0; i < weatherArrayJson.length(); ++i) {
+            // JSON object, that contains info about weather condition.
+            JSONObject jsonObject = weatherArrayJson.getJSONObject(i);
+            JSONArray weatherConditionArrayJson = jsonObject.getJSONArray(WD_WEATHER);
+            JSONObject weatherConditionJson = weatherConditionArrayJson.getJSONObject(0);
+
+            // JSON object, that contains info about temperature.
+            JSONObject mainInfoJson = jsonObject.getJSONObject(WD_MAIN);
+            // JSON condition.
+            weatherCondition = weatherConditionJson.getInt(WD_CONDITION_ID);
+            // Current temperature.
+            currTemp = mainInfoJson.getDouble(WD_TEMP_CURR);
+            // Minimum temperature.
+            minTemp = mainInfoJson.getDouble(WD_TEMP_MIN);
+            // Maximum temperature.
+            maxTemp = mainInfoJson.getDouble(WD_TEMP_MAX);
+            // Date.
+            date = SunshineDateUtils.getLocalDateFromUTC(1000L*jsonObject.getLong(WD_TIME));
+
+            weatherData[i] = new WeatherData(weatherCondition, currTemp, minTemp, maxTemp,
+                    date, forecastType, locationName);
+        }
+        return weatherData;
     }
 }

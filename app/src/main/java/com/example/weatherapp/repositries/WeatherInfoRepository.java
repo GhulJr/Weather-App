@@ -1,4 +1,4 @@
-package com.example.weatherapp.persistence;
+package com.example.weatherapp.repositries;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,9 +6,12 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.weatherapp.async_tasks.InsertAllDataAsyncTask;
+import com.example.weatherapp.async_tasks.ClearThenInsertAllAsyncTask;
 import com.example.weatherapp.data.SunshinePreferences;
+import com.example.weatherapp.interfaces.UpdateCallback;
 import com.example.weatherapp.models.WeatherData;
+import com.example.weatherapp.persistence.WeatherInfoDao;
+import com.example.weatherapp.persistence.WeatherInfoDatabase;
 import com.example.weatherapp.utilities.NetworkUtils;
 import com.example.weatherapp.utilities.OpenWeatherJsonUtils;
 import com.example.weatherapp.view_models.WeatherForecastViewModel;
@@ -23,11 +26,10 @@ public class WeatherInfoRepository {
 
     private Context context;
     private WeatherInfoDao weatherInfoDao;
-    private WeatherInfoDatabase weatherInfoDatabase;
     public static WeatherInfoRepository instance;
 
     public WeatherInfoRepository(Context context) {
-        this.weatherInfoDatabase = WeatherInfoDatabase.getInstance(context);
+        WeatherInfoDatabase weatherInfoDatabase = WeatherInfoDatabase.getInstance(context);
         this.weatherInfoDao = weatherInfoDatabase.getWeatherInfoDao();
         this.context = context;
     }
@@ -40,19 +42,20 @@ public class WeatherInfoRepository {
     }
 
     public void insertWeatherDataTask(WeatherData weatherData) {
-
     }
 
-    public void insertAllWeatherDataTask(WeatherData... weatherData) {
-        InsertAllDataAsyncTask insert = new InsertAllDataAsyncTask(weatherInfoDao);
+    public void ClearThenInsertAllWeatherDataTask(WeatherData... weatherData) {
+        ClearThenInsertAllAsyncTask insert = new ClearThenInsertAllAsyncTask(weatherInfoDao);
         insert.execute(weatherData);
     }
 
     public void updateWeatherData(WeatherData weatherData) {
-
     }
 
-    public void deleteWeatherData(WeatherData weatherData) {
+    public void deleteWeatherDataTask(WeatherData weatherData) {
+    }
+
+    public void deletaAllWeatherData(WeatherData... weatherData) {
 
     }
 
@@ -61,32 +64,46 @@ public class WeatherInfoRepository {
     }
 
     public void fetchData() {
-            new AsyncTask<String, Void, WeatherData[]>() {
+            new  AsyncTask<String, Void, WeatherData[]>() {
                 final String TAG = WeatherForecastViewModel.class.getSimpleName();
 
                 // TODO: Provide two http request for both daily and forecast weather.
                 @Override
                 protected WeatherData[] doInBackground(String... location) {
-
                     // Check if data exist.
-                    if(location.length == 0)
+                    if (location.length == 0)
                         return null;
 
                     // Get JSON string from url.
-                    URL url = NetworkUtils.buildUrl(location[0]);
-                    String jsonResponse = null;
+                    URL dailyUrl = NetworkUtils.buildUrl(
+                            location[0], WeatherData.FORECAST_TYPE_CURRENT);
+                    URL hourlyUrl = NetworkUtils.buildUrl(
+                            location[0], WeatherData.FORECAST_TYPE_HOURLY);
+                    String jsonDailyResponse = null;
+                    String jsonHourlyResponse = null;
                     try {
-                        jsonResponse = NetworkUtils.getResponseFromHttpUrl(url);
+                        jsonDailyResponse = NetworkUtils.getResponseFromHttpUrl(dailyUrl);
+                        jsonHourlyResponse = NetworkUtils.getResponseFromHttpUrl(hourlyUrl);
                     } catch (IOException e) {
                         Log.e(TAG, "Unable to make HTTP request.");
                     }
 
                     // Get objects as array from JSONObject string.
                     WeatherData currWeatherData;
+                    WeatherData[] forecastWeatherData;
                     WeatherData[] weatherData = null;
                     try {
-                        currWeatherData = OpenWeatherJsonUtils.getCurrentWeatherDataFromJson(context, jsonResponse);
-                        weatherData = new WeatherData[] {currWeatherData};
+                        currWeatherData = OpenWeatherJsonUtils
+                                .getCurrentWeatherDataFromJson(context, jsonDailyResponse);
+                        forecastWeatherData = OpenWeatherJsonUtils
+                                .getForecastWeatherDataFromJson(context, jsonHourlyResponse);
+
+
+                        weatherData = new WeatherData[forecastWeatherData.length+1];
+                        weatherData[0] = currWeatherData;
+                        System.arraycopy(forecastWeatherData, 0,
+                                weatherData, 1, forecastWeatherData.length);
+
                     } catch (JSONException e) {
                         Log.e(TAG, "Unable to extract json object.");
                     }
@@ -98,7 +115,7 @@ public class WeatherInfoRepository {
                 @Override
                 protected void onPostExecute(WeatherData[] weatherData) {
                     if(weatherData != null) {
-                        insertAllWeatherDataTask(weatherData);
+                        ClearThenInsertAllWeatherDataTask(weatherData);
                     } else {
                         //TODO: provide feedback about fail
                     }
