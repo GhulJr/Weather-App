@@ -3,9 +3,11 @@ package com.example.weatherapp.repositries;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.weatherapp.R;
 import com.example.weatherapp.async_tasks.ClearThenInsertAllAsyncTask;
 import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.interfaces.UpdateCallback;
@@ -86,6 +88,7 @@ public class WeatherInfoRepository {
                         jsonHourlyResponse = NetworkUtils.getResponseFromHttpUrl(hourlyUrl);
                     } catch (IOException e) {
                         Log.e(TAG, "Unable to make HTTP request.");
+                        return null;
                     }
 
                     // Get objects as array from JSONObject string.
@@ -98,6 +101,9 @@ public class WeatherInfoRepository {
                         forecastWeatherData = OpenWeatherJsonUtils
                                 .getForecastWeatherDataFromJson(context, jsonHourlyResponse);
 
+                        if(currWeatherData == null || forecastWeatherData == null) {
+                            throw new JSONException("JSONObject is empty or equals null.");
+                        }
 
                         weatherData = new WeatherData[forecastWeatherData.length+1];
                         weatherData[0] = currWeatherData;
@@ -117,7 +123,8 @@ public class WeatherInfoRepository {
                     if(weatherData != null) {
                         ClearThenInsertAllWeatherDataTask(weatherData);
                     } else {
-                        //TODO: provide feedback about fail
+                        Toast.makeText(context, R.string.fetching_data_failed, Toast.LENGTH_LONG)
+                                .show();
                     }
                 }
             }.execute(SunshinePreferences.getPreferredWeatherLocation(context));

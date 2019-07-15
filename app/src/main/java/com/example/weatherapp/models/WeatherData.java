@@ -37,10 +37,6 @@ public class WeatherData {
     @IntDef({FORECAST_TYPE_CURRENT, FORECAST_TYPE_HOURLY, FORECAST_TYPE_DAILY})
     public @interface Forecast_Type {}
 
-    /** Constructors */
-    public WeatherData(int i, int i1, int i2) { //TODO: Temporary constructor
-    }
-
     public WeatherData(int weatherConditionID, double currTemp, double minTemp, double maxTemp,
                        long dateInMillis, @Forecast_Type int forecastType, String locationName) {
         this.weatherConditionID = weatherConditionID;

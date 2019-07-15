@@ -162,6 +162,11 @@ public final class OpenWeatherJsonUtils {
         final String WD_LOCATION_NAME = "name";
         final String WD_HTTP_CODE = "cod";
 
+        // Check if forecast string exists.
+        if( forecastJsonStr == null || forecastJsonStr.isEmpty()) {
+            return null;
+        }
+
         JSONObject currentWeatherJson = new JSONObject(forecastJsonStr);
 
         WeatherData weatherData = null;
@@ -222,6 +227,11 @@ public final class OpenWeatherJsonUtils {
         final String WD_CITY = "city";
         final String WD_LOCATION_NAME = "name";
         final String WD_HTTP_CODE = "cod";
+
+        // Check if forecast string exists.
+        if( forecastJsonStr == null || forecastJsonStr.isEmpty()) {
+            return null;
+        }
 
         JSONObject currentWeatherJson = new JSONObject(forecastJsonStr);
 

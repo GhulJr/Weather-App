@@ -16,6 +16,7 @@
 package com.example.weatherapp;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.TargetApi;
@@ -34,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.recycler_views.WeatherAdapter;
 import com.example.weatherapp.settings.SettingsActivity;
@@ -131,13 +133,15 @@ public class MainActivity extends AppCompatActivity implements
         } else if(key.equals(getString(R.string.unit_key))) {
             // Update daily weather unit.
             TextView tv = findViewById(R.id.weather_temp);
-            String updatedTemp = SunshineWeatherUtils.formatTemperature(
-                    getApplicationContext(), Double.parseDouble((String) tv.getText()));
+            String[] s = tv.getText().toString().split(String.valueOf((char) 0x00B0));
+            String updatedTemp = SunshineWeatherUtils
+                    .formatTemperature(getApplicationContext(), Double.parseDouble(s[0]));
             tv.setText(updatedTemp);
             // Update hourly forecast unit.
             mAdapter.notifyDataSetChanged();
-        }
+            }
     }
+
 
     /** Get all the values from shared preferences to set it up. */
     private void setUpSharedPreferences() {
@@ -168,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setAdapter(mAdapter);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void inflateDailyWeatherLayout(List<WeatherData> weatherData) {
         /* Get necessary views. */
         TextView weatherLocationView = findViewById(R.id.weather_location);
@@ -251,9 +254,7 @@ public class MainActivity extends AppCompatActivity implements
 }
 
 //TODO: Na chwilę lista co mam zrobić:
-//- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
 //- automatyczne updaty
-//- manualne updaty też
 //- powiadomienia (w końcu serwisy, jeeeej :D)
 //-(ficzerek) wiele lokalizacji
 //-(ficzerek) widget
@@ -266,7 +267,8 @@ public class MainActivity extends AppCompatActivity implements
 //- przepisać async tasks na coś innego
 //- zacząć korzystać z trello :CCCCCCCCC
 
-
+//- manualne updaty też //////////////////////////////////////////////ZROBIONE
+//- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
 //- zapewnić dobre przechowywanie na dane ///////////////////////////////ZROBIONE
 //- poprawić list item ///////////////////////zrobione
 //- pokombinować z wieloma forcastami i wgl ////////////////Zrobione

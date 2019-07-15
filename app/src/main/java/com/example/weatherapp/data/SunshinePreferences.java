@@ -21,6 +21,8 @@ import androidx.preference.PreferenceManager;
 
 import com.example.weatherapp.R;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class SunshinePreferences {
 
@@ -151,5 +153,14 @@ public class SunshinePreferences {
     public static double[] getDefaultWeatherCoordinates() {
         /** This will be implemented in a future lesson **/
         return DEFAULT_WEATHER_COORDINATES;
+    }
+
+    public static boolean isFirstRun(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("PREFERENCE", MODE_PRIVATE);
+        Boolean isFirstRun = sp.getBoolean("isFirstRun", true);
+        if(isFirstRun) {
+            sp.edit().putBoolean("isFirstRun", false).apply();
+        }
+     return isFirstRun;
     }
 }

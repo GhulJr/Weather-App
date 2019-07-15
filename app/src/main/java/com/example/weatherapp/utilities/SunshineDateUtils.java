@@ -143,7 +143,8 @@ public final class SunshineDateUtils {
             int flags = DateUtils.FORMAT_SHOW_DATE
                     | DateUtils.FORMAT_NO_YEAR
                     | DateUtils.FORMAT_ABBREV_ALL
-                    | DateUtils.FORMAT_SHOW_WEEKDAY;
+                    | DateUtils.FORMAT_SHOW_WEEKDAY
+                    | DateUtils.FORMAT_SHOW_TIME;
 
             return DateUtils.formatDateTime(context, localDate, flags);
         }
@@ -176,6 +177,8 @@ public final class SunshineDateUtils {
      * @return the string day of the week
      */
     private static String getDayName(Context context, long dateInMillis) {
+        //TODO: change it to show actual days' names.
+
         /*
          * If the date is today, return the localized version of "Today" instead of the actual
          * day name.
