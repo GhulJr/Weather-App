@@ -202,7 +202,8 @@ public final class OpenWeatherJsonUtils {
         // Maximum temperature.
         double maxTemp = mainInfoJson.getDouble(WD_TEMP_MAX);
         // Date.
-        long date = SunshineDateUtils.getLocalDateFromUTC(1000L*currentWeatherJson.getLong(WD_TIME));
+        long date = SunshineDateUtils
+                .getUTCDateFromLocal(1000L*currentWeatherJson.getLong(WD_TIME));
         // Forecast type.
         int forecastType = WeatherData.FORECAST_TYPE_CURRENT;
         // Location.
@@ -288,7 +289,7 @@ public final class OpenWeatherJsonUtils {
             // Maximum temperature.
             maxTemp = mainInfoJson.getDouble(WD_TEMP_MAX);
             // Date.
-            date = SunshineDateUtils.getLocalDateFromUTC(1000L*jsonObject.getLong(WD_TIME));
+            date = 1000L*jsonObject.getLong(WD_TIME);
 
             weatherData[i] = new WeatherData(weatherCondition, currTemp, minTemp, maxTemp,
                     date, forecastType, locationName);

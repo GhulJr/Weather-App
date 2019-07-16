@@ -8,9 +8,8 @@ import android.widget.Toast;
 import androidx.lifecycle.LiveData;
 
 import com.example.weatherapp.R;
-import com.example.weatherapp.async_tasks.ClearThenInsertAllAsyncTask;
+import com.example.weatherapp.async_tasks.ClearThenInsertTask;
 import com.example.weatherapp.data.SunshinePreferences;
-import com.example.weatherapp.interfaces.UpdateCallback;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.persistence.WeatherInfoDao;
 import com.example.weatherapp.persistence.WeatherInfoDatabase;
@@ -46,9 +45,9 @@ public class WeatherInfoRepository {
     public void insertWeatherDataTask(WeatherData weatherData) {
     }
 
-    public void ClearThenInsertAllWeatherDataTask(WeatherData... weatherData) {
-        ClearThenInsertAllAsyncTask insert = new ClearThenInsertAllAsyncTask(weatherInfoDao);
-        insert.execute(weatherData);
+    public void ClearThenInsertTask(WeatherData... weatherData) {
+        Thread thread =new Thread(new ClearThenInsertTask(weatherInfoDao, weatherData));
+        thread.start();
     }
 
     public void updateWeatherData(WeatherData weatherData) {
@@ -69,7 +68,6 @@ public class WeatherInfoRepository {
             new  AsyncTask<String, Void, WeatherData[]>() {
                 final String TAG = WeatherForecastViewModel.class.getSimpleName();
 
-                // TODO: Provide two http request for both daily and forecast weather.
                 @Override
                 protected WeatherData[] doInBackground(String... location) {
                     // Check if data exist.
@@ -121,7 +119,7 @@ public class WeatherInfoRepository {
                 @Override
                 protected void onPostExecute(WeatherData[] weatherData) {
                     if(weatherData != null) {
-                        ClearThenInsertAllWeatherDataTask(weatherData);
+                        ClearThenInsertTask(weatherData);
                     } else {
                         Toast.makeText(context, R.string.fetching_data_failed, Toast.LENGTH_LONG)
                                 .show();

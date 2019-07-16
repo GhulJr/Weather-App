@@ -107,7 +107,6 @@ public class SunshinePreferences {
      * @param context Context used to get the SharedPreferences
      * @return true If metric display should be used
      */
-    //TODO: Change the way metrics are used!!!
     public static boolean isMetric(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);

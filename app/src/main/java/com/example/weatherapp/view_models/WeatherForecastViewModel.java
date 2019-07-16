@@ -28,7 +28,7 @@ public class WeatherForecastViewModel extends AndroidViewModel {
     private void init(Context context) {
         weatherInfoRepository = WeatherInfoRepository.getInstance(context);
         data = weatherInfoRepository.getWeatherDataTask();
-        //TODO: temporary init
+        // Initialize only when the app is launched for the first time.
         if(SunshinePreferences.isFirstRun(context)){
             loadData();
         }
@@ -41,6 +41,5 @@ public class WeatherForecastViewModel extends AndroidViewModel {
     public void loadData() {
         weatherInfoRepository.fetchData();
         data = weatherInfoRepository.getWeatherDataTask();
-
     }
 }

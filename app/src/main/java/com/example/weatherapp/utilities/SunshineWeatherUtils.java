@@ -181,6 +181,10 @@ public final class SunshineWeatherUtils {
                 break;
             case 520:
                 stringId = R.string.condition_520;
+            case 521:
+                stringId = R.string.condition_521;
+            case 522:
+                stringId = R.string.condition_522;
                 break;
             case 531:
                 stringId = R.string.condition_531;
@@ -199,6 +203,8 @@ public final class SunshineWeatherUtils {
                 break;
             case 612:
                 stringId = R.string.condition_612;
+            case 613:
+                stringId = R.string.condition_613;
                 break;
             case 615:
                 stringId = R.string.condition_615;

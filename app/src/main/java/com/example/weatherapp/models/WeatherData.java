@@ -14,7 +14,6 @@ public class WeatherData {
     public static final int FORECAST_TYPE_DAILY = 2;
 
 
-    //TODO: provide types of specific columns (if necessary)
     @PrimaryKey(autoGenerate = true)
     private int weatherID;
     @ColumnInfo(name = "weather_condition")

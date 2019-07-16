@@ -173,8 +173,3 @@ public final class NetworkUtils {
         }
     }
 }
-
-//TODO: add and use progress bar.
-//TODO: provide messages for failed/no connection.
-//TODO: read about collections to choose the best one for containing weather data.
-//TODO: provide searching by id if needed.

@@ -15,18 +15,15 @@
  */
 package com.example.weatherapp;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +32,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.recycler_views.WeatherAdapter;
 import com.example.weatherapp.settings.SettingsActivity;
@@ -63,10 +59,8 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         // TODO: find out why it was present
-        // Hide return action button.
-        getSupportActionBar().setHomeButtonEnabled(false);      // Disable the button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Remove the left caret
-        getSupportActionBar().setDisplayShowHomeEnabled(false); // Remove the icon
+        // Hide home button.
+        hideHomeButton();
 
         // Set up all values related to shared preferences.
         setUpSharedPreferences();
@@ -74,19 +68,8 @@ public class MainActivity extends AppCompatActivity implements
         // Set up recycler view for hourly forecast information.
         setUpHourlyRecyclerView();
 
-        // Create ViewModel.
-        viewModel = ViewModelProviders
-                .of(this)
-                .get(WeatherForecastViewModel.class);
-
-        // Set observer to LiveData.
-        viewModel.getData().observe(this, new Observer<List<WeatherData>>() {
-            @Override
-            public void onChanged(@Nullable List<WeatherData> weatherData) {
-                inflateDailyWeatherLayout(weatherData);
-                inflateHourlyForecastLayout(weatherData);
-            }
-        });
+        // Set up view model.
+        setUpViewModel();
     }
 
     /** onDestroy method. */
@@ -147,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements
     private void setUpSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        //TODO: set it when shared preferences will be ready
     }
 
     private void setUpHourlyRecyclerView() {
@@ -156,20 +138,44 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setHasFixedSize(true);
 
         // Provide layout manager for recycler view.
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
-        // TODO: Temporary create adapter here to check if recycler view works correctly.
         // Create adapter for recycler view with listener, that starts weather details activity.
         mAdapter = new WeatherAdapter(getApplicationContext(), new WeatherAdapter.ListItemClickListener() {
             @Override
             public void onListItemClick(int clickedItemIndex) {
-                Intent intent = new Intent(MainActivity.this, WeatherDetailsActivity.class);
+                Intent intent = new Intent(
+                        MainActivity.this, WeatherDetailsActivity.class);
                 startActivity(intent);
             }
         });
         // Set adapter to recycler view.
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void hideHomeButton() {
+        // Hide return action button.
+        getSupportActionBar().setHomeButtonEnabled(false);      // Disable the button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Remove the left caret
+        getSupportActionBar().setDisplayShowHomeEnabled(false); // Remove the icon
+    }
+
+    private void setUpViewModel() {
+        // Create ViewModel.
+        viewModel = ViewModelProviders
+                .of(this)
+                .get(WeatherForecastViewModel.class);
+
+        // Set observer to LiveData.
+        viewModel.getData().observe(this, new Observer<List<WeatherData>>() {
+            @Override
+            public void onChanged(@Nullable List<WeatherData> weatherData) {
+                inflateDailyWeatherLayout(weatherData);
+                inflateHourlyForecastLayout(weatherData);
+            }
+        });
     }
 
     private void inflateDailyWeatherLayout(List<WeatherData> weatherData) {
@@ -203,25 +209,28 @@ public class MainActivity extends AppCompatActivity implements
 
         // Location.
         String location = currWeatherData.getLocationName();
+
         // Date.
-        DateFormat dateFormat = android.text.format.
-                DateFormat.getDateFormat(getApplicationContext());
         String date = SunshineDateUtils.getFriendlyDateString(
                 getApplicationContext(),
                 currWeatherData.getDateInMillis(),
                 true);
+
         // Current temperature.
         String currTemp = SunshineWeatherUtils
                 .formatTemperature(
                         getApplicationContext(),
                         currWeatherData.getCurrTemp());
+
         // Icon.
         int weatherConditionRes = SunshineWeatherUtils
                 .getIconResourceForWeatherCondition(
                         currWeatherData.getWeatherConditionID());
+
         // High Lows
         String minMaxTemp = SunshineWeatherUtils
                 .formatHighLows(getApplicationContext(), high, low);
+
         // Description.
         String description = SunshineWeatherUtils
                 .getStringForWeatherCondition(
@@ -266,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements
 //- dodać odpowiednie weather conditions
 //- przepisać async tasks na coś innego
 //- zacząć korzystać z trello :CCCCCCCCC
+//- poprawić wszystko co działa na wątkach
 
 //- manualne updaty też //////////////////////////////////////////////ZROBIONE
 //- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
