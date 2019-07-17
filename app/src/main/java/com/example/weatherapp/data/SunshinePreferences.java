@@ -15,8 +15,11 @@
  */
 package com.example.weatherapp.data;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+
 import androidx.preference.PreferenceManager;
 
 import com.example.weatherapp.R;
@@ -114,10 +117,25 @@ public class SunshinePreferences {
         String defUnit = context.getString(R.string.celsius_value);
         String unit = sharedPreferences.getString(unitKey, defUnit);
 
-        if(unit.equals(defUnit)){
+        if(defUnit.equals(unit)){
             return true;
         }
         return false;
+    }
+
+    public static boolean isNotifying(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String key = context.getString(R.string.notifications_key);
+        Resources r = context.getResources();
+        boolean defValue = r.getBoolean(R.bool.default_notifications);
+        return sp.getBoolean(key, defValue);
+    }
+
+    public static int getPreferredRefreshTime(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String key = context.getString(R.string.refresh_key);
+        String defValue = context.getString(R.string.three_hours_value);
+        return Integer.parseInt(sp.getString(key, defValue));
     }
 
     /**

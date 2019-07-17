@@ -1,0 +1,75 @@
+package com.example.weatherapp.workers;
+
+import android.annotation.TargetApi;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
+import com.example.weatherapp.R;
+import com.example.weatherapp.models.WeatherData;
+import com.example.weatherapp.repositries.WeatherInfoRepository;
+import com.example.weatherapp.utilities.SunshineWeatherUtils;
+
+public class UpdateNotifyWorker extends Worker {
+
+
+    public UpdateNotifyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
+    }
+
+    @NonNull
+    @Override
+    public Result doWork() {
+        WeatherInfoRepository r =  WeatherInfoRepository.getInstance(getApplicationContext());
+        r.fetchData();
+        WeatherData wd = r.getWeatherDataByForecastType(WeatherData.FORECAST_TYPE_CURRENT);
+
+        double temp = wd.getCurrTemp();
+        int condition = wd.getWeatherConditionID();
+
+        makeNotification(temp, condition);
+        return Result.success(); //TODO provide two other options.
+    }
+
+    private void makeNotification(double temp, int weatherCondition) {
+        NotificationManager manager = (NotificationManager) getApplicationContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        String channelId = "weather_channel";
+        String channelName = "weather_current";
+
+        // Check if device require channels.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new
+                    NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
+        }
+        // Values used in notification.
+        Context appContext = getApplicationContext();
+        String formatTemp = SunshineWeatherUtils
+                .formatTemperature(appContext, temp);
+        String description = SunshineWeatherUtils
+                .getStringForWeatherCondition(appContext, weatherCondition);
+        int iconRes = SunshineWeatherUtils
+                .getIconResourceForWeatherCondition(weatherCondition);
+
+        // Set up and launch notification.
+        Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), iconRes);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId)
+                .setContentTitle(formatTemp)
+                .setContentText(description)
+                .setLargeIcon(icon)
+                .setSmallIcon(R.mipmap.ic_launcher);
+
+        //TODO: create resources
+        manager.notify(1, builder.build());
+    }
+}

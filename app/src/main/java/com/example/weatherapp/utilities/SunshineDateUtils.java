@@ -145,24 +145,4 @@ public final class SunshineDateUtils {
         return DateUtils.formatDateTime(context, timeInMillis, flags);
     }
 
-    /**
-     * Given a day, returns just the name to use for that day.
-     *   E.g "today", "tomorrow", "Wednesday".
-     *
-     * @param context      Context to use for resource localization
-     * @param dateInMillis The date in milliseconds (local time)
-     *
-     * @return the string day of the week
-     */
-    private static String getDayName(Context context, long dateInMillis) {
-        //TODO: change it to show actual days' names.
-
-        /*
-         * If the date is today, return the localized version of "Today" instead of the actual
-         * day name.
-         */
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-        return dayFormat.format(dateInMillis);
-
-    }
 }

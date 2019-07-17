@@ -26,6 +26,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import android.util.Log;
 import android.view.Menu;
@@ -37,9 +40,9 @@ import com.example.weatherapp.recycler_views.WeatherAdapter;
 import com.example.weatherapp.settings.SettingsActivity;
 import com.example.weatherapp.utilities.SunshineDateUtils;
 import com.example.weatherapp.utilities.SunshineWeatherUtils;
+import com.example.weatherapp.utilities.WorkerUtilities;
 import com.example.weatherapp.view_models.WeatherForecastViewModel;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView recyclerView;
     private WeatherAdapter mAdapter;
     private WeatherForecastViewModel viewModel;
+    private WorkManager workManager;
+    private PeriodicWorkRequest workRequest;
 
     /** onCreate method. */
     @Override
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // TODO: find out why it was present
         // Hide home button.
-        hideHomeButton();
+        setUpActionBar();
 
         // Set up all values related to shared preferences.
         setUpSharedPreferences();
@@ -70,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Set up view model.
         setUpViewModel();
+
+        // Set up workers.
+        setUpWorkers();
     }
 
     /** onDestroy method. */
@@ -112,8 +120,9 @@ public class MainActivity extends AppCompatActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(key.equals(getString(R.string.location_key))) {
             // Load new data if location has been changed.
-            viewModel.loadData(); //TODO: idk if shared preferences should update data like that. Check udemy solution.
+            viewModel.loadData();
         } else if(key.equals(getString(R.string.unit_key))) {
+            // TODO: temporary solution.
             // Update daily weather unit.
             TextView tv = findViewById(R.id.weather_temp);
             String[] s = tv.getText().toString().split(String.valueOf((char) 0x00B0));
@@ -122,7 +131,12 @@ public class MainActivity extends AppCompatActivity implements
             tv.setText(updatedTemp);
             // Update hourly forecast unit.
             mAdapter.notifyDataSetChanged();
+        } else if(key.equals(getString(R.string.refresh_key))) {
+            if(workRequest != null){
+                WorkerUtilities.cancelRequest(getApplicationContext(), workRequest.getId());
             }
+            setUpWorkers();
+        }
     }
 
 
@@ -155,8 +169,9 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void hideHomeButton() {
+    private void setUpActionBar() {
         // Hide return action button.
+        getSupportActionBar().setElevation(0);
         getSupportActionBar().setHomeButtonEnabled(false);      // Disable the button
         getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Remove the left caret
         getSupportActionBar().setDisplayShowHomeEnabled(false); // Remove the icon
@@ -176,6 +191,18 @@ public class MainActivity extends AppCompatActivity implements
                 inflateHourlyForecastLayout(weatherData);
             }
         });
+    }
+
+    private void setUpWorkers() {
+        workManager = WorkManager.getInstance(getApplicationContext());
+        Constraints constraints = new Constraints.Builder()
+                .build();
+
+        workRequest = (PeriodicWorkRequest) WorkerUtilities
+                .getPeriodicWorkRequest(getApplicationContext());
+        if(workRequest != null) {
+            workManager.enqueue(workRequest);
+        }
     }
 
     private void inflateDailyWeatherLayout(List<WeatherData> weatherData) {
@@ -276,6 +303,15 @@ public class MainActivity extends AppCompatActivity implements
 //- przepisać async tasks na coś innego
 //- zacząć korzystać z trello :CCCCCCCCC
 //- poprawić wszystko co działa na wątkach
+//- jeżeli baza jest pusta daj o tym znać
+//- klikowalne notificationy
+//- Albo uda mi się jakoś obserwować repo przez live datę i wtedy nie będzie problemu z serwisem,
+//  albo może stworze własną livedatę, która będzie updatowała się gdy serwis zakończy działanie (wolę pierwsze).
+
+//- co do notyfikacji to: żeby uruchamiało się tylko przy pierwszym odpaleniu apki, dopracować UI,
+//  włączyć apkę jeśli kliknie się na notyfikacje, przenieść wszystko do klasy utills, poprawić w samym workerze
+//  zwracane wyniki w doWork, dodać opcje wyłączenia powiadomień (trzeba updatować dane dołączone do requesta),
+//  poprawić obserwowanie zmian w danych (livedata w repo i viewmodel obserwuje).
 
 //- manualne updaty też //////////////////////////////////////////////ZROBIONE
 //- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
@@ -284,3 +320,4 @@ public class MainActivity extends AppCompatActivity implements
 //- pokombinować z wieloma forcastami i wgl ////////////////Zrobione
 //- generalnie ogarnąć jak przetwarzać dane z tego api ///////////////////////////////////ZROBIONE
 //- dodać preferencje i ogarnąć, w jaki sposób wybierać miasta //////////////////ZROBIONE
+

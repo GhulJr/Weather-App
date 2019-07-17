@@ -25,4 +25,11 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+
+    <style name="SunshineBlue" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/colorPrimarySunshine</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkSunshine</item>
+        <item name="colorAccent">@color/colorAccentSunshine</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
 </resources>

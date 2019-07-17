@@ -64,6 +64,10 @@ public class WeatherInfoRepository {
         return weatherInfoDao.getWeatherData();
     }
 
+    public WeatherData getWeatherDataByForecastType(@WeatherData.Forecast_Type int forecast_type) {
+        return weatherInfoDao.getWeatherDataByForecastType(forecast_type);
+    }
+
     public void fetchData() {
             new  AsyncTask<String, Void, WeatherData[]>() {
                 final String TAG = WeatherForecastViewModel.class.getSimpleName();

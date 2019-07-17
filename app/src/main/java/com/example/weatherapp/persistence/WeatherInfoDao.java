@@ -23,7 +23,7 @@ public interface WeatherInfoDao {
     LiveData<List<WeatherData>> getWeatherData();
 
     @Query("SELECT * FROM weather_information WHERE forecast_type = :forecastType")
-    LiveData<List<WeatherData>> getWeatherDataByForecastType(@Forecast_Type int forecastType);
+    WeatherData getWeatherDataByForecastType(@Forecast_Type int forecastType);
 
     @Delete
     int deleteWeatherData(WeatherData... weatherData);

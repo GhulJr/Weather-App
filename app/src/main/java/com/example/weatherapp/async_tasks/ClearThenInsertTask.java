@@ -1,5 +1,9 @@
 package com.example.weatherapp.async_tasks;
 
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.persistence.WeatherInfoDao;
 import com.example.weatherapp.persistence.WeatherInfoDatabase;

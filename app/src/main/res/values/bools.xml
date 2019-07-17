@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="default_refresh">true</bool>
+    <bool name="default_notifications">true</bool>
 </resources>
