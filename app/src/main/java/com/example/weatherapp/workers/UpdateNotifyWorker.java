@@ -2,8 +2,6 @@ package com.example.weatherapp.workers;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -77,7 +75,6 @@ public class UpdateNotifyWorker extends Worker {
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), iconRes);
         NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(getApplicationContext(), channelId)
-                .setContentIntent(createPendingIntent())
                 .setContentTitle(location)
                 .setContentText(formatTemp + " " + description)
                 .setLargeIcon(icon)
@@ -85,16 +82,6 @@ public class UpdateNotifyWorker extends Worker {
 
         //TODO: create resources
         manager.notify(1, builder.build());
-    }
-
-    private PendingIntent createPendingIntent() {
-        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
-        stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        return resultPendingIntent;
     }
 
 }
