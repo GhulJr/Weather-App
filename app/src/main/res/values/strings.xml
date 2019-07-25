@@ -137,9 +137,11 @@
     <!--Location-->
     <string name="location">Location</string>
     <string name="pref_default_location">London,UK</string>
+    <string name="location_key">location</string>
 
     <!--Units-->
     <string name="unit">Unit</string>
+    <string name="unit_key">unit</string>
 
     <!--Labels-->
     <string name="celsius_label">°C</string>
@@ -151,6 +153,7 @@
 
     <!--Auto refresh-->
     <string name="auto_refresh">Auto refresh</string>
+    <string name="refresh_key">refresh_key</string>
     <!--Labels-->
     <string name="never_label">Never</string>
     <string name="one_hour_label">1 hour</string>
@@ -169,29 +172,15 @@
     <!--Notifications-->
     <string name="notifications">Notifications</string>
     <string name="notifications_description">Notify about weather changes.</string>
-    <string name="location_key">location</string>
-    <string name="unit_key">unit</string>
-    <string name="refresh_key">refresh_key</string>
     <string name="notifications_key">notifications</string>
+
+    <!-- General -->
     <string name="settings_title">User\'s settings</string>
     <string name="settings_label">Settings</string>
     <string name="settings">Settings</string>
     <string name="reload">Reload</string>
     <string name="fetching_data_failed">Unable to fetch data.</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
-
-    <!-- - - - - - - - - - - -->
-    <!-- Used by NetworkUtils-->
-    <!-- - - - - - - - - - - -->
-    <!--NONE-->
-
-    <!-- - - - - - - - - - - - - - - -->
-    <!-- Used by OpenWeatherJsonUtils-->
-    <!-- - - - - - - - - - - - - - - -->
-    <!--NONE-->
-
-    <!-- - - - - - - - - - - - - - -->
-    <!--Used by SunshinePreferences-->
-    <!-- - - - - - - - - - - - - - -->
-    <!--NONE-->
 </resources>

@@ -96,5 +96,4 @@ public class UpdateNotifyWorker extends Worker {
 
         return resultPendingIntent;
     }
-
 }

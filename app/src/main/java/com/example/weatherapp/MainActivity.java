@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements
         viewModel.getData().observe(this, new Observer<List<WeatherData>>() {
             @Override
             public void onChanged(@Nullable List<WeatherData> weatherData) {
+                //TODO: provide information about no data
+
                 inflateDailyWeatherLayout(weatherData);
                 inflateHourlyForecastLayout(weatherData);
             }
@@ -282,49 +284,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void inflateHourlyForecastLayout(List<WeatherData> weatherData) {
-
         List<WeatherData> forecastWeatherData = new ArrayList<>();
-
         for(WeatherData wd : weatherData) {
             if(wd.getForecastType() == WeatherData.FORECAST_TYPE_HOURLY) {
                 forecastWeatherData.add(wd);
             }
         }
-
         mAdapter.setWeatherData(forecastWeatherData);
     }
 }
 
-//TODO: Na chwilę lista co mam zrobić:
-//-(ficzerek) wiele lokalizacji
-//-(ficzerek) widget
-//- zamienić listę na hashmapę (w LiveData)
-//- no i na końcu porawanie juajki, dodawanie animacji, powiadomień o braku połączenia itp. itd.
-//- może użyć card layout?
-//- animowane ikony!
-//- przepisać async tasks na coś innego
-//- zacząć korzystać z trello :CCCCCCCCC
-//- poprawić wszystko co działa na wątkach
-//- jeżeli baza jest pusta daj o tym znać
-//- klikowalne notificationy
-//- Albo uda mi się jakoś obserwować repo przez live datę i wtedy nie będzie problemu z serwisem,
-//  albo może stworze własną livedatę, która będzie updatowała się gdy serwis zakończy działanie (wolę pierwsze).
-
-//- co do notyfikacji to: żeby uruchamiało się tylko przy pierwszym odpaleniu apki, dopracować UI,
-//  włączyć apkę jeśli kliknie się na notyfikacje, przenieść wszystko do klasy utills, poprawić w samym workerze
-//  zwracane wyniki w doWork, dodać opcje wyłączenia powiadomień (trzeba updatować dane dołączone do requesta),
-//  poprawić obserwowanie zmian w danych (livedata w repo i viewmodel obserwuje).
-
-
-//- automatyczne updaty //////////////////////////////// ZROBIONE
-//- powiadomienia (w końcu serwisy, jeeeej :D) ////////////////// ZROBIONE
-//- zmienić format datowy nieco /////////////////////////////////zrobione
-//- dodać odpowiednie weather conditions //////////////////////////ZROBIONE
-//- manualne updaty też //////////////////////////////////////////////ZROBIONE
-//- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
-//- zapewnić dobre przechowywanie na dane ///////////////////////////////ZROBIONE
-//- poprawić list item ///////////////////////zrobione
-//- pokombinować z wieloma forcastami i wgl ////////////////Zrobione
-//- generalnie ogarnąć jak przetwarzać dane z tego api ///////////////////////////////////ZROBIONE
-//- dodać preferencje i ogarnąć, w jaki sposób wybierać miasta //////////////////ZROBIONE
 
