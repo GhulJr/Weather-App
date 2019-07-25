@@ -2,14 +2,12 @@ package com.example.weatherapp.view_models;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
 
 import com.example.weatherapp.data.SunshinePreferences;
-import com.example.weatherapp.interfaces.UpdateCallback;
 import com.example.weatherapp.repositries.WeatherInfoRepository;
 
 public class WeatherForecastViewModel extends AndroidViewModel {
@@ -29,7 +27,7 @@ public class WeatherForecastViewModel extends AndroidViewModel {
         weatherInfoRepository = WeatherInfoRepository.getInstance(context);
         data = weatherInfoRepository.getWeatherDataTask();
         // Initialize only when the app is launched for the first time.
-        if(SunshinePreferences.isFirstRun(context)){
+        if(SunshinePreferences.isDataFetchedFirstTime(context)){
             loadData();
         }
     }

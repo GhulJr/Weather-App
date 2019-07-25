@@ -1,9 +1,9 @@
 package com.example.weatherapp.workers;
 
-import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -13,7 +13,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
+import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.repositries.WeatherInfoRepository;
 import com.example.weatherapp.utilities.SunshineWeatherUtils;
@@ -28,18 +30,26 @@ public class UpdateNotifyWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        // Fetch data
         WeatherInfoRepository r =  WeatherInfoRepository.getInstance(getApplicationContext());
         r.fetchData();
         WeatherData wd = r.getWeatherDataByForecastType(WeatherData.FORECAST_TYPE_CURRENT);
-
+        // Get data used in notification
         double temp = wd.getCurrTemp();
         int condition = wd.getWeatherConditionID();
+        String location = wd.getLocationName();
+        // Get uri data from input
+        boolean isNotifying = SunshinePreferences.isNotifying(getApplicationContext());
 
-        makeNotification(temp, condition);
+        // Make notification if user choose to do it so.
+        if(isNotifying) {
+            makeNotification(temp, condition, location);
+        }
+
         return Result.success(); //TODO provide two other options.
     }
 
-    private void makeNotification(double temp, int weatherCondition) {
+    private void makeNotification(double temp, int weatherCondition, String location) {
         NotificationManager manager = (NotificationManager) getApplicationContext()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -48,8 +58,8 @@ public class UpdateNotifyWorker extends Worker {
 
         // Check if device require channels.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new
-                    NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(
+                    channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
             manager.createNotificationChannel(channel);
         }
         // Values used in notification.
@@ -63,13 +73,15 @@ public class UpdateNotifyWorker extends Worker {
 
         // Set up and launch notification.
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), iconRes);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId)
-                .setContentTitle(formatTemp)
-                .setContentText(description)
+        NotificationCompat.Builder builder = new NotificationCompat
+                .Builder(getApplicationContext(), channelId)
+                .setContentTitle(location)
+                .setContentText(formatTemp + " " + description)
                 .setLargeIcon(icon)
                 .setSmallIcon(R.mipmap.ic_launcher);
 
         //TODO: create resources
         manager.notify(1, builder.build());
     }
+
 }

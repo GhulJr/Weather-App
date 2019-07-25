@@ -172,12 +172,21 @@ public class SunshinePreferences {
         return DEFAULT_WEATHER_COORDINATES;
     }
 
-    public static boolean isFirstRun(Context context) {
+    public static boolean isDataFetchedFirstTime(Context context) {
         SharedPreferences sp = context.getSharedPreferences("PREFERENCE", MODE_PRIVATE);
-        Boolean isFirstRun = sp.getBoolean("isFirstRun", true);
-        if(isFirstRun) {
-            sp.edit().putBoolean("isFirstRun", false).apply();
+        boolean isDataFetchedFirstTime = sp.getBoolean("isDataFetchedFirstTime", true);
+        if(isDataFetchedFirstTime) {
+            sp.edit().putBoolean("isDataFetchedFirstTime", false).apply();
         }
-     return isFirstRun;
+     return isDataFetchedFirstTime;
+    }
+
+    public static boolean isWorkerSetFirstTime(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("PREFERENCE", MODE_PRIVATE);
+        boolean isWorkerSetFirstTime = sp.getBoolean("isWorkerSetFirstTime", true);
+        if(isWorkerSetFirstTime) {
+            sp.edit().putBoolean("isWorkerSetFirstTime", false).apply();
+        }
+        return isWorkerSetFirstTime;
     }
 }

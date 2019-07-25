@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
+import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -35,9 +36,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.recycler_views.WeatherAdapter;
 import com.example.weatherapp.settings.SettingsActivity;
+import com.example.weatherapp.utilities.NetworkUtils;
 import com.example.weatherapp.utilities.SunshineDateUtils;
 import com.example.weatherapp.utilities.SunshineWeatherUtils;
 import com.example.weatherapp.utilities.WorkerUtilities;
@@ -76,8 +79,10 @@ public class MainActivity extends AppCompatActivity implements
         // Set up view model.
         setUpViewModel();
 
-        // Set up workers.
-        setUpWorkers();
+        // Set up workers if it is first launch.
+        if(SunshinePreferences.isWorkerSetFirstTime(getApplicationContext())){
+            setUpWorkers();
+        }
     }
 
     /** onDestroy method. */
@@ -196,10 +201,11 @@ public class MainActivity extends AppCompatActivity implements
     private void setUpWorkers() {
         workManager = WorkManager.getInstance(getApplicationContext());
         Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
 
         workRequest = (PeriodicWorkRequest) WorkerUtilities
-                .getPeriodicWorkRequest(getApplicationContext());
+                .getPeriodicWorkRequest(getApplicationContext(), constraints);
         if(workRequest != null) {
             workManager.enqueue(workRequest);
         }
@@ -290,16 +296,12 @@ public class MainActivity extends AppCompatActivity implements
 }
 
 //TODO: Na chwilę lista co mam zrobić:
-//- automatyczne updaty
-//- powiadomienia (w końcu serwisy, jeeeej :D)
 //-(ficzerek) wiele lokalizacji
 //-(ficzerek) widget
 //- zamienić listę na hashmapę (w LiveData)
-//- zmienić format datowy nieco
 //- no i na końcu porawanie juajki, dodawanie animacji, powiadomień o braku połączenia itp. itd.
 //- może użyć card layout?
 //- animowane ikony!
-//- dodać odpowiednie weather conditions
 //- przepisać async tasks na coś innego
 //- zacząć korzystać z trello :CCCCCCCCC
 //- poprawić wszystko co działa na wątkach
@@ -313,6 +315,11 @@ public class MainActivity extends AppCompatActivity implements
 //  zwracane wyniki w doWork, dodać opcje wyłączenia powiadomień (trzeba updatować dane dołączone do requesta),
 //  poprawić obserwowanie zmian w danych (livedata w repo i viewmodel obserwuje).
 
+
+//- automatyczne updaty //////////////////////////////// ZROBIONE
+//- powiadomienia (w końcu serwisy, jeeeej :D) ////////////////// ZROBIONE
+//- zmienić format datowy nieco /////////////////////////////////zrobione
+//- dodać odpowiednie weather conditions //////////////////////////ZROBIONE
 //- manualne updaty też //////////////////////////////////////////////ZROBIONE
 //- zrobić observa (albo zwykły callback) view modelu na repo żeby po insercie tworzyło live data
 //- zapewnić dobre przechowywanie na dane ///////////////////////////////ZROBIONE
