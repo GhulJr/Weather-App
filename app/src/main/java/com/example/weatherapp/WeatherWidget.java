@@ -1,8 +1,10 @@
 package com.example.weatherapp;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.RemoteViews;
 
@@ -22,7 +24,6 @@ import java.util.concurrent.Executors;
 //TODO: implement OnSharedPreferencesChanged.
 //TODO: implement refresh button.
 //TODO: update UI when notification fetches data.
-//TODO: add onClick to widget.
 
 public class WeatherWidget extends AppWidgetProvider {
     static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager,
@@ -38,7 +39,7 @@ public class WeatherWidget extends AppWidgetProvider {
                 CharSequence temperature = SunshineWeatherUtils
                         .formatTemperature(context, weatherData.getCurrTemp());
                 CharSequence date = SunshineDateUtils
-                        .getFriendlyDateString(context, weatherData.getDateInMillis(), true);
+                        .getFriendlyDateString(context, weatherData.getDateInMillis(), false);
                 int weatherConditionRes = SunshineWeatherUtils
                         .getIconResourceForWeatherCondition(
                                 weatherData.getWeatherConditionID());
@@ -51,6 +52,12 @@ public class WeatherWidget extends AppWidgetProvider {
                 views.setTextViewCompoundDrawables(
                         R.id.appwidget_temp, weatherConditionRes,0,0,0);
                 views.setTextViewText(R.id.appwidget_date, date);
+
+                // Setting up clickable intent.
+                Intent intent = new Intent(context, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                views.setOnClickPendingIntent(R.id.appwidget_layout, pendingIntent);
+
                 return views;
             }
 
