@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="@dimen/widget_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="@color/colorAccentSunshine">
 
     <TextView
         android:id="@+id/appwidget_temp"
@@ -21,13 +22,29 @@
         android:id="@+id/appwidget_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:gravity="center"
         android:layout_margin="8dp"
         android:textColor="#ffffff"
         android:textSize="20sp"
         android:layout_gravity="center"
-        tools:text="@string/location"/>
+        tools:text="@string/location" />
+<LinearLayout
+    android:layout_marginEnd="12dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/appwidget_refresh"
+        android:layout_width="44dp"
+        android:layout_height="38dp"
+        android:layout_gravity="center"
+        android:background="@null"
+        android:clickable="true"
+        android:contentDescription="@string/reload"
+        android:focusable="true"
+        android:src="@drawable/outline_refresh_white_18dp" />
 
     <TextView
         android:id="@+id/appwidget_date"
@@ -36,6 +53,9 @@
         android:layout_gravity="center"
         android:textColor="#ffffff"
         android:textSize="18sp"
-        tools:text="Aktual. 26 lipca, 15:47"/>
+        tools:text="26 lipca, 15:47" />
+
+</LinearLayout>
+
 
 </LinearLayout>

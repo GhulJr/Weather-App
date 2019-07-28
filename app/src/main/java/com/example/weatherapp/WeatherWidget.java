@@ -3,8 +3,10 @@ package com.example.weatherapp;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.RemoteViews;
 
@@ -20,11 +22,8 @@ import java.util.concurrent.Executors;
 /**
  * Implementation of App Widget functionality.
  */
-//TODO: make widget scalable.
 //TODO: implement OnSharedPreferencesChanged.
-//TODO: implement refresh button.
 //TODO: update UI when notification fetches data.
-
 public class WeatherWidget extends AppWidgetProvider {
     static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager,
                                 final int appWidgetId) {
@@ -45,6 +44,9 @@ public class WeatherWidget extends AppWidgetProvider {
                                 weatherData.getWeatherConditionID());
 
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
+
+                // Set clickable intent to update widget.
+                setUpRefreshButton(context, views, appWidgetId);
 
                 // Updating views.
                 views.setTextViewText(R.id.appwidget_location, location);
@@ -68,8 +70,6 @@ public class WeatherWidget extends AppWidgetProvider {
             }
         }.execute();
 
-
-
     }
 
     @Override
@@ -88,6 +88,20 @@ public class WeatherWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    private static void setUpRefreshButton(Context context, RemoteViews views, int id) {
+        Intent intentUpdate = new Intent(context, WeatherWidget.class);
+        intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        int ids[] = {id};
+
+        intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        PendingIntent pendingUpdate = PendingIntent.getBroadcast(
+                context, id, intentUpdate,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.appwidget_refresh, pendingUpdate);
+
     }
 }
 

@@ -4,11 +4,14 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -17,6 +20,7 @@ import androidx.work.WorkerParameters;
 
 import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
+import com.example.weatherapp.WeatherWidget;
 import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.repositries.WeatherInfoRepository;
@@ -36,6 +40,11 @@ public class UpdateNotifyWorker extends Worker {
         WeatherInfoRepository r =  WeatherInfoRepository.getInstance(getApplicationContext());
         r.fetchData();
         WeatherData wd = r.getWeatherDataByForecastType(WeatherData.FORECAST_TYPE_CURRENT);
+
+        // Return failure if data is empty
+        if(wd == null) {
+            return Result.retry();
+        }
         // Get data used in notification
         double temp = wd.getCurrTemp();
         int condition = wd.getWeatherConditionID();
@@ -57,6 +66,7 @@ public class UpdateNotifyWorker extends Worker {
 
         String channelId = "weather_channel";
         String channelName = "weather_current";
+
 
         // Check if device require channels.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

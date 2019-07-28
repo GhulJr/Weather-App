@@ -15,6 +15,8 @@
  */
 package com.example.weatherapp;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -39,8 +41,8 @@ import android.widget.TextView;
 import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.recycler_views.WeatherAdapter;
+import com.example.weatherapp.repositries.WeatherInfoRepository;
 import com.example.weatherapp.settings.SettingsActivity;
-import com.example.weatherapp.utilities.NetworkUtils;
 import com.example.weatherapp.utilities.SunshineDateUtils;
 import com.example.weatherapp.utilities.SunshineWeatherUtils;
 import com.example.weatherapp.utilities.WorkerUtilities;
@@ -130,12 +132,17 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: temporary solution.
             // Update daily weather unit.
             TextView tv = findViewById(R.id.weather_temp);
-            String[] s = tv.getText().toString().split(String.valueOf((char) 0x00B0));
+            WeatherData wd = viewModel.getCurrentWeather();
+
             String updatedTemp = SunshineWeatherUtils
-                    .formatTemperature(getApplicationContext(), Double.parseDouble(s[0]));
+                    .formatTemperature(getApplicationContext(), wd.getCurrTemp());
             tv.setText(updatedTemp);
+
+
             // Update hourly forecast unit.
             mAdapter.notifyDataSetChanged();
+            // Update widget units.
+            updateWidgets();
         } else if(key.equals(getString(R.string.refresh_key))) {
             if(workRequest != null){
                 WorkerUtilities.cancelRequest(getApplicationContext(), workRequest.getId());
@@ -193,9 +200,9 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onChanged(@Nullable List<WeatherData> weatherData) {
                 //TODO: provide information about no data
-
                 inflateDailyWeatherLayout(weatherData);
                 inflateHourlyForecastLayout(weatherData);
+                updateWidgets();
             }
         });
     }
@@ -291,6 +298,19 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
         mAdapter.setWeatherData(forecastWeatherData);
+    }
+
+    //TODO: When i call intent to update widget I get nulls because object doesn't exist (it exist).
+    private void updateWidgets() {
+        Intent intentUpdate = new Intent(getApplicationContext(), WeatherWidget.class);
+        intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        int[] widgetIds = appWidgetManager.getAppWidgetIds(
+                new ComponentName(getApplicationContext(), WeatherWidget.class));
+
+        intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+        getApplicationContext().sendBroadcast(intentUpdate);
     }
 }
 

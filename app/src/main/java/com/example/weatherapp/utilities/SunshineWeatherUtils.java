@@ -64,6 +64,7 @@ public final class SunshineWeatherUtils {
      * @return Formatted temperature String in the following form:
      * "21°C"
      */
+    //TODO: It doesn't format from fahrenheits to celsius.
     public static String formatTemperature(Context context, double temperature) {
         int temperatureFormatResourceId = R.string.format_temperature_celsius;
 

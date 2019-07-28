@@ -113,14 +113,12 @@ public final class SunshineDateUtils {
         long dayNumber = getDayNumber(localDate);
         long currentDayNumber = getDayNumber(System.currentTimeMillis());
 
-        if (dayNumber < currentDayNumber + 7 || showFullDate) {
+        if (dayNumber < currentDayNumber + 7 && showFullDate) {
             String readableDate = getReadableDateString(context, localDate);
             return readableDate;
         } else {
             int flags = DateUtils.FORMAT_SHOW_DATE
                     | DateUtils.FORMAT_NO_YEAR
-                    | DateUtils.FORMAT_ABBREV_ALL
-                    | DateUtils.FORMAT_SHOW_WEEKDAY
                     | DateUtils.FORMAT_SHOW_TIME;
 
             return DateUtils.formatDateTime(context, localDate, flags);

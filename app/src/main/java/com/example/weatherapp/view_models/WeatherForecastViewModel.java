@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
 
 import com.example.weatherapp.data.SunshinePreferences;
+import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.repositries.WeatherInfoRepository;
 
 public class WeatherForecastViewModel extends AndroidViewModel {
@@ -39,5 +40,9 @@ public class WeatherForecastViewModel extends AndroidViewModel {
     public void loadData() {
         weatherInfoRepository.fetchData();
         data = weatherInfoRepository.getWeatherDataTask();
+    }
+
+    public WeatherData getCurrentWeather() {
+        return weatherInfoRepository.getWeatherDataByForecastType(WeatherData.FORECAST_TYPE_CURRENT);
     }
 }

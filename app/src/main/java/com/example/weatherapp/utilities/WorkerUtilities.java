@@ -3,6 +3,7 @@ package com.example.weatherapp.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -13,6 +14,7 @@ import com.example.weatherapp.R;
 import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.workers.UpdateNotifyWorker;
 
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +41,7 @@ public class WorkerUtilities {
         return new PeriodicWorkRequest
                 .Builder(UpdateNotifyWorker.class, time, TimeUnit.HOURS)
                 .setConstraints(constraints)
+                .setInitialDelay(time, TimeUnit.HOURS)
                 .build();
     }
 
