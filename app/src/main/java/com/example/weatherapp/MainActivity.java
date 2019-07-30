@@ -24,6 +24,7 @@ import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
         setUpSharedPreferences();
 
         // Set up recycler view for hourly forecast information.
-        setUpHourlyRecyclerView();
+        //setUpHourlyRecyclerView();
 
         // Set up view model.
         setUpViewModel();
@@ -131,18 +133,15 @@ public class MainActivity extends AppCompatActivity implements
         } else if(key.equals(getString(R.string.unit_key))) {
             // TODO: temporary solution.
             // Update daily weather unit.
-            TextView tv = findViewById(R.id.weather_temp);
-            WeatherData wd = viewModel.getCurrentWeather();
-
-            String updatedTemp = SunshineWeatherUtils
-                    .formatTemperature(getApplicationContext(), wd.getCurrTemp());
-            tv.setText(updatedTemp);
-
+            List<WeatherData> wd = (List<WeatherData>) viewModel.getData().getValue();
+            if(wd != null)
+                inflateDailyWeatherLayout(wd);
 
             // Update hourly forecast unit.
-            mAdapter.notifyDataSetChanged();
+           // mAdapter.notifyDataSetChanged();
             // Update widget units.
             updateWidgets();
+
         } else if(key.equals(getString(R.string.refresh_key))) {
             if(workRequest != null){
                 WorkerUtilities.cancelRequest(getApplicationContext(), workRequest.getId());
@@ -158,14 +157,14 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-    private void setUpHourlyRecyclerView() {
+/*    private void setUpHourlyRecyclerView() {
         // Get recycler view layout.
         recyclerView = findViewById(R.id.main_recycler_view);
         recyclerView.setHasFixedSize(true);
 
         // Provide layout manager for recycler view.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
-                this, LinearLayoutManager.HORIZONTAL, false);
+                this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
         // Create adapter for recycler view with listener, that starts weather details activity.
@@ -180,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
         // Set adapter to recycler view.
         recyclerView.setAdapter(mAdapter);
     }
-
+*/
     private void setUpActionBar() {
         // Hide return action button.
         getSupportActionBar().setElevation(0);
@@ -221,6 +220,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void inflateDailyWeatherLayout(List<WeatherData> weatherData) {
+
+        if(weatherData == null) {
+            return;
+        }
         /* Get necessary views. */
         TextView weatherLocationView = findViewById(R.id.weather_location);
         TextView weatherDateView = findViewById(R.id.weather_date);
@@ -297,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements
                 forecastWeatherData.add(wd);
             }
         }
-        mAdapter.setWeatherData(forecastWeatherData);
+       // mAdapter.setWeatherData(forecastWeatherData);
     }
 
     //TODO: When i call intent to update widget I get nulls because object doesn't exist (it exist).

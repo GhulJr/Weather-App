@@ -14,25 +14,36 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#C0C0C0">
 
     <include
-        layout="@layout/current_daily_weather"
-        android:id="@+id/curr_weather">
-    </include>
+        android:id="@+id/curr_weather"
+        layout="@layout/current_daily_weather"></include>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/main_recycler_view"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        app:layout_constraintTop_toBottomOf="@id/curr_weather">
+        android:layout_gravity="center"
+        android:text="@string/hourly_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
+    <include
+        layout="@layout/forecast_layout"/>
 
-    </androidx.recyclerview.widget.RecyclerView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/daily_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        layout="@layout/forecast_layout"/>
+
+</LinearLayout>

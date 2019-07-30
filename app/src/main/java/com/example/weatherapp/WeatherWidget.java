@@ -22,8 +22,7 @@ import java.util.concurrent.Executors;
 /**
  * Implementation of App Widget functionality.
  */
-//TODO: implement OnSharedPreferencesChanged.
-//TODO: update UI when notification fetches data.
+
 public class WeatherWidget extends AppWidgetProvider {
     static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager,
                                 final int appWidgetId) {

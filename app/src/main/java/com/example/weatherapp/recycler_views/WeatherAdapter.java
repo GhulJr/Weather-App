@@ -31,17 +31,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         this.onClickListener = onClickListener;
     }
 
-    public WeatherAdapter(Context context, List<WeatherData> weatherData, ListItemClickListener onClickListener) {
-        this.context = context;
-        this.weatherData = weatherData;
-        this.onClickListener = onClickListener;
-    }
 
     /** Create new ViewHolder. */
     @Override @NonNull
     public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.hourly_forecast_list_item;
+        int layoutIdForListItem = R.layout.daily_forecast_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@color/colorPrimarySunshine">
+
+
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+         android:layout_gravity="center">
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             android:padding="4dp"
+             android:layout_gravity="center">
+
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+         </LinearLayout>
+
+     </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

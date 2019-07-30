@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_margin="8dp"
+        android:layout_margin="0dp"
         android:textColor="#ffffff"
         android:textSize="20sp"
         android:layout_gravity="center"
@@ -44,7 +44,7 @@
         android:clickable="true"
         android:contentDescription="@string/reload"
         android:focusable="true"
-        android:src="@drawable/outline_refresh_white_18dp" />
+        android:src="@drawable/outline_refresh_white_18dp"/>
 
     <TextView
         android:id="@+id/appwidget_date"

@@ -182,5 +182,7 @@
     <string name="fetching_data_failed">Unable to fetch data.</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="hourly_label">Hourly</string>
+    <string name="daily_label">Daily</string>
 
 </resources>

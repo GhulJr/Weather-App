@@ -48,7 +48,9 @@ dependencies {
     def room_version = "2.1.0"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-    // Implementation for WorkerManager
+    // Implementation for WorkerManager.
     def work_version = "2.1.0"
     implementation "androidx.work:work-runtime:$work_version"
+    // Implementation for CardView.
+    implementation 'com.android.support:cardview-v7:28.0.0'
 }

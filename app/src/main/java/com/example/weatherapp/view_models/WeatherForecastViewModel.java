@@ -11,12 +11,14 @@ import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
 import com.example.weatherapp.repositries.WeatherInfoRepository;
 
+import java.util.List;
+
 public class WeatherForecastViewModel extends AndroidViewModel {
 
     private static final String TAG = WeatherForecastViewModel.class.getSimpleName();
     private final Context context;
     private WeatherInfoRepository weatherInfoRepository;
-    private LiveData data;
+    private LiveData<List<WeatherData>> data;
 
     public WeatherForecastViewModel(@NonNull Application application) {
         super(application);
