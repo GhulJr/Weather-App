@@ -23,21 +23,23 @@
         android:layout_gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:layout_marginBottom="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="17:20"/>
     <ImageView
         android:id="@+id/hourly_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_cloudy" />
+        android:src="@drawable/ic_cloudy"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"/>
     <TextView
         android:id="@+id/hourly_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="4dp"
         android:text="15C"/>
 

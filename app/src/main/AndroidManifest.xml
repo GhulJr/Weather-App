@@ -16,6 +16,8 @@
         <receiver android:name=".WeatherWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.INSERT"/>
+                <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
 
             <meta-data

@@ -1,5 +1,6 @@
 package com.example.weatherapp;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -7,7 +8,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.CalendarContract;
 import android.widget.RemoteViews;
 
 import com.example.weatherapp.data.SunshinePreferences;
@@ -47,17 +51,18 @@ public class WeatherWidget extends AppWidgetProvider {
                 // Set clickable intent to update widget.
                 setUpRefreshButton(context, views, appWidgetId);
 
+                // Set up clickable intent to date.
+               // setUpCalendarIntent(context, views);
+
                 // Updating views.
                 views.setTextViewText(R.id.appwidget_location, location);
                 views.setTextViewText(R.id.appwidget_temp, temperature);
                 views.setTextViewCompoundDrawables(
-                        R.id.appwidget_temp, weatherConditionRes,0,0,0);
+                        R.id.appwidget_temp, weatherConditionRes, 0, 0, 0);
                 views.setTextViewText(R.id.appwidget_date, date);
 
                 // Setting up clickable intent.
-                Intent intent = new Intent(context, MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-                views.setOnClickPendingIntent(R.id.appwidget_layout, pendingIntent);
+                setUpOpenAppIntent(context, views);
 
                 return views;
             }
@@ -100,6 +105,24 @@ public class WeatherWidget extends AppWidgetProvider {
                 context, id, intentUpdate,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.appwidget_refresh, pendingUpdate);
+
+    }
+
+   /* private static void setUpCalendarIntent(Context context, RemoteViews views) {
+        Intent intentCalendar = new Intent(Intent.ACTION_INSERT);
+
+        PendingIntent configPendingIntent =
+                PendingIntent.getBroadcast(context, 0, intentCalendar, 0);
+
+        views.setOnClickPendingIntent(R.id.appwidget_date, configPendingIntent);
+
+    }*/
+
+    private static void setUpOpenAppIntent(Context context, RemoteViews views) {
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        views.setOnClickPendingIntent(R.id.appwidget_temp, pendingIntent);
+        views.setOnClickPendingIntent(R.id.appwidget_location, pendingIntent);
 
     }
 }

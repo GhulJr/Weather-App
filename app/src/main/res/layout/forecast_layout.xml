@@ -40,6 +40,10 @@
                  layout="@layout/forecast_item">
              </include>
 
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
          </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -4,20 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_gravity="center"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardElevation="8dp"
     app:cardCornerRadius="8dp"
-    app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="true"
     app:cardBackgroundColor="@color/colorPrimarySunshine">
-
 
          <LinearLayout
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:orientation="horizontal"
-             android:padding="4dp"
+             android:padding="32dp"
              android:layout_gravity="center">
 
              <include
@@ -40,6 +39,22 @@
                  layout="@layout/forecast_item">
              </include>
 
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
+             <include
+                 layout="@layout/forecast_item">
+             </include>
+
          </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/hourly_label"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
 </androidx.cardview.widget.CardView>

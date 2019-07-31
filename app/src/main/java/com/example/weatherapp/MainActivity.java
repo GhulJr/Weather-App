@@ -19,6 +19,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -197,9 +199,9 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void inflateDailyWeatherLayout(List<WeatherData> weatherData) {
+    private void inflateDailyWeatherLayout(@NonNull List<WeatherData> weatherData) {
 
-        if(weatherData == null) {
+        if(weatherData.isEmpty()) {
             return;
         }
         /* Get necessary views. */
@@ -271,8 +273,8 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void inflateForecastLayouts(List<WeatherData> weatherData) {
-        if(weatherData == null) {
+    private void inflateForecastLayouts(@NonNull List<WeatherData> weatherData) {
+        if(weatherData.isEmpty()) {
             return;
         }
         List<WeatherData> forecastWeatherData = new ArrayList<>();
@@ -285,9 +287,14 @@ public class MainActivity extends AppCompatActivity implements
         inflateForecastLayout(hourlyVg, forecastWeatherData);
     }
 
+    //TODO: chane it's name
     private void inflateForecastLayout(@NonNull ViewGroup viewGroup,@NonNull List<WeatherData> weatherData) {
+
         ViewGroup linearLayout = (ViewGroup) viewGroup.getChildAt(0);
-        for(int i = 0; i < 5; ++i) {
+
+        int length = linearLayout.getChildCount();
+
+        for(int i = 0; i < length; ++i) {
             // Get data.
             ViewGroup item = (ViewGroup) ((ViewGroup) linearLayout.getChildAt(i)).getChildAt(0);
             WeatherData wd = weatherData.get(i);

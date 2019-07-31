@@ -53,6 +53,8 @@
         android:layout_gravity="center"
         android:textColor="#ffffff"
         android:textSize="18sp"
+        android:clickable="true"
+        android:focusable="true"
         tools:text="26 lipca, 15:47" />
 
 </LinearLayout>
