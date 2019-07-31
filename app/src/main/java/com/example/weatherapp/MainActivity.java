@@ -19,16 +19,15 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
@@ -37,13 +36,14 @@ import androidx.work.WorkManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.weatherapp.data.SunshinePreferences;
 import com.example.weatherapp.models.WeatherData;
-import com.example.weatherapp.recycler_views.WeatherAdapter;
-import com.example.weatherapp.repositries.WeatherInfoRepository;
 import com.example.weatherapp.settings.SettingsActivity;
 import com.example.weatherapp.utilities.SunshineDateUtils;
 import com.example.weatherapp.utilities.SunshineWeatherUtils;
@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    private RecyclerView recyclerView;
-    private WeatherAdapter mAdapter;
     private WeatherForecastViewModel viewModel;
     private WorkManager workManager;
     private PeriodicWorkRequest workRequest;
@@ -69,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ViewGroup vg = findViewById(R.id.hourly_forecast_layout);
 
         // TODO: find out why it was present
         // Hide home button.
@@ -134,11 +134,12 @@ public class MainActivity extends AppCompatActivity implements
             // TODO: temporary solution.
             // Update daily weather unit.
             List<WeatherData> wd = (List<WeatherData>) viewModel.getData().getValue();
-            if(wd != null)
+            if(wd != null){
                 inflateDailyWeatherLayout(wd);
+            } else {
+                Log.e(TAG, "Unable to change units.");
+            }
 
-            // Update hourly forecast unit.
-           // mAdapter.notifyDataSetChanged();
             // Update widget units.
             updateWidgets();
 
@@ -157,29 +158,6 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-/*    private void setUpHourlyRecyclerView() {
-        // Get recycler view layout.
-        recyclerView = findViewById(R.id.main_recycler_view);
-        recyclerView.setHasFixedSize(true);
-
-        // Provide layout manager for recycler view.
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
-                this, RecyclerView.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        // Create adapter for recycler view with listener, that starts weather details activity.
-        mAdapter = new WeatherAdapter(getApplicationContext(), new WeatherAdapter.ListItemClickListener() {
-            @Override
-            public void onListItemClick(int clickedItemIndex) {
-                Intent intent = new Intent(
-                        MainActivity.this, WeatherDetailsActivity.class);
-                startActivity(intent);
-            }
-        });
-        // Set adapter to recycler view.
-        recyclerView.setAdapter(mAdapter);
-    }
-*/
     private void setUpActionBar() {
         // Hide return action button.
         getSupportActionBar().setElevation(0);
@@ -200,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onChanged(@Nullable List<WeatherData> weatherData) {
                 //TODO: provide information about no data
                 inflateDailyWeatherLayout(weatherData);
-                inflateHourlyForecastLayout(weatherData);
+                inflateForecastLayouts(weatherData);
                 updateWidgets();
             }
         });
@@ -293,14 +271,46 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void inflateHourlyForecastLayout(List<WeatherData> weatherData) {
+    private void inflateForecastLayouts(List<WeatherData> weatherData) {
+        if(weatherData == null) {
+            return;
+        }
         List<WeatherData> forecastWeatherData = new ArrayList<>();
         for(WeatherData wd : weatherData) {
             if(wd.getForecastType() == WeatherData.FORECAST_TYPE_HOURLY) {
                 forecastWeatherData.add(wd);
             }
         }
-       // mAdapter.setWeatherData(forecastWeatherData);
+        ViewGroup hourlyVg = findViewById(R.id.hourly_forecast_layout);
+        inflateForecastLayout(hourlyVg, forecastWeatherData);
+    }
+
+    private void inflateForecastLayout(@NonNull ViewGroup viewGroup,@NonNull List<WeatherData> weatherData) {
+        ViewGroup linearLayout = (ViewGroup) viewGroup.getChildAt(0);
+        for(int i = 0; i < 5; ++i) {
+            // Get data.
+            ViewGroup item = (ViewGroup) ((ViewGroup) linearLayout.getChildAt(i)).getChildAt(0);
+            WeatherData wd = weatherData.get(i);
+
+            // Get views.
+            TextView timeView = (TextView) item.getChildAt(0);
+            ImageView imageView = (ImageView) item.getChildAt(1);
+            TextView temperatureView = (TextView) item.getChildAt(2);
+
+            // Get values.
+            String time =  (String) android.text.format.DateFormat
+                    .format("H:mm", wd.getDateInMillis());
+
+            int conditionId = wd.getWeatherConditionID();
+            int imageRes = SunshineWeatherUtils.getIconResourceForWeatherCondition(conditionId);
+            String temperature = SunshineWeatherUtils
+                    .formatTemperature(this, wd.getCurrTemp());
+
+            // Inflate layout.
+            timeView.setText(time);
+            imageView.setImageResource(imageRes);
+            temperatureView.setText(temperature);
+        }
     }
 
     //TODO: When i call intent to update widget I get nulls because object doesn't exist (it exist).
